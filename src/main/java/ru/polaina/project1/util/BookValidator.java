@@ -28,8 +28,5 @@ public class BookValidator implements Validator {
         if (bookDAO.showInfoAboutBookByTitle(book.getTitle()).isPresent()) {
             errors.rejectValue("title", "", "This title is already taken");
         }
-        if (bookDAO.showInfoAboutBookByWriter(book.getWriter()).isPresent()) {
-            errors.rejectValue("writer", "", "This writer is already taken");
-        }
     }
 }
