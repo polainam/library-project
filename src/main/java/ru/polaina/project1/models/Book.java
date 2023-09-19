@@ -1,18 +1,31 @@
 package ru.polaina.project1.models;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import org.hibernate.annotations.Fetch;
 
+@Entity
+@Table(name = "Book")
 public class Book {
 
+    @Id
+    @Column(name = "book_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookId;
-    private String personId;
+
+    @ManyToOne
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    private Person personId;
 
     @NotEmpty(message = "Title should not be empty")
+    @Column(name = "title")
     private String title;
 
     @NotEmpty(message = "Writer should not be empty")
+    @Column(name = "writer")
     private String writer;
 
+    @Column(name = "year_of_publishing")
     private int yearOfPublishing;
 
     public int getBookId() {
@@ -23,11 +36,11 @@ public class Book {
         this.bookId = bookId;
     }
 
-    public String getPersonId() {
+    public Person getPersonId() {
         return personId;
     }
 
-    public void setPersonId(String personId) {
+    public void setPersonId(Person personId) {
         this.personId = personId;
     }
 

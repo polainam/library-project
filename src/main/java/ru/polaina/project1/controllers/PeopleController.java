@@ -6,10 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.polaina.project1.dao.BookDAO;
-import ru.polaina.project1.dao.PersonDAO;
 import ru.polaina.project1.models.Book;
 import ru.polaina.project1.models.Person;
+import ru.polaina.project1.services.BooksService;
+import ru.polaina.project1.services.PeopleService;
 import ru.polaina.project1.util.PersonValidator;
 
 import java.util.List;
@@ -19,19 +19,17 @@ import java.util.List;
 public class PeopleController {
 
     private final PersonValidator personValidator;
-    private final PersonDAO personDAO;
-    private final BookDAO bookDAO;
+    private final PeopleService peopleService;
 
     @Autowired
-    public PeopleController(PersonValidator personValidator, PersonDAO personDAO, BookDAO bookDAO) {
+    public PeopleController(PersonValidator personValidator, PeopleService peopleService, BooksService bookService) {
         this.personValidator = personValidator;
-        this.personDAO = personDAO;
-        this.bookDAO = bookDAO;
+        this.peopleService = peopleService;
     }
 
     @GetMapping()
     public String listOfPeople(Model model) {
-        model.addAttribute("people", personDAO.showListOfPeople());
+        model.addAttribute("people", peopleService.findAll());
         return "people/listOfPeople";
     }
 
@@ -46,14 +44,14 @@ public class PeopleController {
         if (bindingResult.hasErrors()) {
             return "people/newPerson";
         }
-        personDAO.addNewPerson(person);
+        peopleService.save(person);
         return "redirect:/people";
     }
 
     @GetMapping("/{id}")
     public String pagePerson(@PathVariable("id") int id, Model model) {
-        Person person = personDAO.showInfoAboutPerson(id);
-        List<Book> books = bookDAO.showListOfBooksByPersonId(person.getPersonId());
+        Person person = peopleService.findOne(id);
+        List<Book> books = person.getBooks();
         model.addAttribute("books", books);
         model.addAttribute("infoAboutPerson", person);
         return "people/pagePerson";
@@ -61,24 +59,20 @@ public class PeopleController {
 
     @GetMapping("/{id}/edit")
     public String personEditPage(@PathVariable("id") int id, Model model) {
-        model.addAttribute("editPerson", personDAO.showInfoAboutPerson(id));
+        model.addAttribute("editPerson", peopleService.findOne(id));
         return "people/editPerson";
     }
 
     @PatchMapping("/{id}")
-    public String updateInfoAboutPerson(@ModelAttribute("editPerson") @Valid Person editPerson, BindingResult bindingResult, @PathVariable("id") int id) {
-        personValidator.validate(editPerson, bindingResult);
-        if (bindingResult.hasErrors()) {
-            return "people/editPerson";
-        }
-        personDAO.updateInfoAboutPerson(id, editPerson);
+    public String updateInfoAboutPerson(@ModelAttribute("editPerson") @Valid Person editPerson, @PathVariable("id") int id) {
+        peopleService.update(id, editPerson);
         return "redirect:/people";
     }
 
     //Будет ошибка, тк on delete по умолчанию (Но если у человека нет книг, то удалится)
     @DeleteMapping("/{id}")
     public String deletePerson(@PathVariable("id") int id) {
-        personDAO.deletePerson(id);
+        peopleService.delete(id);
         return "redirect:/people";
     }
 }
