@@ -20,11 +20,13 @@ public class PeopleController {
 
     private final PersonValidator personValidator;
     private final PeopleService peopleService;
+    private final BooksService booksService;
 
     @Autowired
-    public PeopleController(PersonValidator personValidator, PeopleService peopleService, BooksService bookService) {
+    public PeopleController(PersonValidator personValidator, PeopleService peopleService, BooksService bookService, BooksService booksService) {
         this.personValidator = personValidator;
         this.peopleService = peopleService;
+        this.booksService = booksService;
     }
 
     @GetMapping()
@@ -51,7 +53,7 @@ public class PeopleController {
     @GetMapping("/{id}")
     public String pagePerson(@PathVariable("id") int id, Model model) {
         Person person = peopleService.findOne(id);
-        List<Book> books = person.getBooks();
+        List<Book> books = booksService.findByPersonId(person);//не работает, тк запрос делается вне транзакции
         model.addAttribute("books", books);
         model.addAttribute("infoAboutPerson", person);
         return "people/pagePerson";

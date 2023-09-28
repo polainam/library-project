@@ -2,7 +2,6 @@ package ru.polaina.project1.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import org.hibernate.annotations.Fetch;
 
 @Entity
 @Table(name = "Book")

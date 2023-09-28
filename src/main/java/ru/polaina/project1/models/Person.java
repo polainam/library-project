@@ -2,7 +2,6 @@ package ru.polaina.project1.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import org.hibernate.annotations.Fetch;
 
 import java.util.List;
 
@@ -25,8 +24,7 @@ public class Person {
     @Column(name = "year_of_birth")
     private int yearOfBirth;
 
-    @OneToMany(mappedBy = "personId",
-            fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "personId", fetch = FetchType.LAZY)
     private List<Book> books;
     public int getPersonId() {
         return personId;

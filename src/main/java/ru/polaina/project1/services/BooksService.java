@@ -1,6 +1,10 @@
 package ru.polaina.project1.services;
 
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +29,20 @@ public class BooksService {
         return booksRepository.findAll();
     }
 
-/*    public List<Book> findByPersonId(int personId) {
+    public List<Book> findAll(Integer page, Integer booksPerPage) {
+        return booksRepository.findAll(PageRequest.of(page, booksPerPage)).getContent();
+    }
+
+    public List<Book> findAll(String yearOfPublishing) {
+        return booksRepository.findAll(Sort.by(yearOfPublishing));
+    }
+
+    public List<Book> findAll(Integer page, Integer booksPerPage, String yearOfPublishing) {
+        return booksRepository.findAll(PageRequest.of(page, booksPerPage, Sort.by(yearOfPublishing))).getContent();
+    }
+    public List<Book> findByPersonId(Person personId) {
         return booksRepository.findByPersonId(personId);
-    }*/
+    }
 
     @Transactional
     public void save(Book book) {

@@ -12,6 +12,8 @@ import ru.polaina.project1.services.BooksService;
 import ru.polaina.project1.services.PeopleService;
 import ru.polaina.project1.util.BookValidator;
 
+import java.util.Objects;
+
 @Controller
 @RequestMapping("/books")
 public class BooksController {
@@ -28,8 +30,22 @@ public class BooksController {
     }
 
     @GetMapping()
-    public String listOfBooks(Model model) {
-        model.addAttribute("books", bookService.findAll());
+    public String listOfBooks(Model model,
+                              @RequestParam(value = "page", required = false) Integer page,
+                              @RequestParam(value = "books_per_page", required = false) Integer booksPerPage,
+                              @RequestParam(value = "sort_by_year", required = false) String sortByYear) {
+        if (page != null && booksPerPage != null && !Objects.equals(sortByYear, "true")) {
+            model.addAttribute("books", bookService.findAll(page, booksPerPage));
+        }
+        else if (page == null && booksPerPage == null && Objects.equals(sortByYear, "true")) {
+            model.addAttribute("books", bookService.findAll("yearOfPublishing"));
+        }
+        else if (page != null && booksPerPage != null && Objects.equals(sortByYear, "true")) {
+            model.addAttribute("books", bookService.findAll(page, booksPerPage, "yearOfPublishing"));
+        }
+        else {
+            model.addAttribute("books", bookService.findAll());
+        }
         return "books/listOfBooks";
     }
 
