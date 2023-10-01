@@ -15,7 +15,9 @@
 <div th:if="${!books.isEmpty()}">
     <b th:text="${'Books:'}"></b>
     <div th:each="book : ${books}">
-        <p th:text="${book.getTitle() + ', ' + book.getWriter() + ', ' + book.getYearOfPublishing()}"></p>
+        <p th:style="'color: ' + (${book.isReturnTimeOverdue()} ? 'red' : 'black')">
+            <span th:text="${book.getTitle() + ', ' + book.getWriter() + ', ' + book.getYearOfPublishing()}"></span>
+        </p>
     </div>
 </div>
 <br>

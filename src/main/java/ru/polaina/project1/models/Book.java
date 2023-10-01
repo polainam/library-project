@@ -2,6 +2,14 @@ package ru.polaina.project1.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Entity
 @Table(name = "Book")
@@ -26,6 +34,14 @@ public class Book {
 
     @Column(name = "year_of_publishing")
     private int yearOfPublishing;
+
+    @Column(name = "date_of_receiving")
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date dateOfReceiving;
+
+    @Transient
+    private boolean isReturnTimeOverdue;
 
     public int getBookId() {
         return bookId;
@@ -66,4 +82,23 @@ public class Book {
         this.yearOfPublishing = yearOfPublishing;
     }
 
+    public Date getDateOfReceiving() {
+        return dateOfReceiving;
+    }
+
+    public void setDateOfReceiving(Date dateOfReceiving) {
+        this.dateOfReceiving = dateOfReceiving;
+    }
+
+    public boolean isReturnTimeOverdue() {
+        Date currentTime = new Timestamp(System.currentTimeMillis());
+        long differenceInMillis = currentTime.getTime() - dateOfReceiving.getTime();
+        long differenceInDays = TimeUnit.MILLISECONDS.toDays(differenceInMillis);
+
+        return differenceInDays > 10;
+    }
+
+    public void setReturnTimeOverdue(boolean returnTimeOverdue) {
+        isReturnTimeOverdue = returnTimeOverdue;
+    }
 }

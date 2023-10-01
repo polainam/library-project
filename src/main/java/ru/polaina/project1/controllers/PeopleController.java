@@ -12,6 +12,8 @@ import ru.polaina.project1.services.BooksService;
 import ru.polaina.project1.services.PeopleService;
 import ru.polaina.project1.util.PersonValidator;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -53,7 +55,7 @@ public class PeopleController {
     @GetMapping("/{id}")
     public String pagePerson(@PathVariable("id") int id, Model model) {
         Person person = peopleService.findOne(id);
-        List<Book> books = booksService.findByPersonId(person);//не работает, тк запрос делается вне транзакции
+        List<Book> books = booksService.findByPersonId(person);
         model.addAttribute("books", books);
         model.addAttribute("infoAboutPerson", person);
         return "people/pagePerson";

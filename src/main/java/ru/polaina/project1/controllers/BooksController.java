@@ -12,6 +12,7 @@ import ru.polaina.project1.services.BooksService;
 import ru.polaina.project1.services.PeopleService;
 import ru.polaina.project1.util.BookValidator;
 
+import java.util.List;
 import java.util.Objects;
 
 @Controller
@@ -103,6 +104,13 @@ public class BooksController {
     public String updateInfoAboutBook(@ModelAttribute("editBook") @Valid Book editBook, @PathVariable("id") int id) {
         bookService.update(id, editBook);
         return "redirect:/books";
+    }
+
+    @GetMapping("/search")
+    public String searchBooks(@RequestParam String query, Model model) {
+        List<Book> searchBooks = bookService.findByTitleIsStartingWith(query);
+        model.addAttribute("books", searchBooks);
+        return "books/listOfBooks";
     }
 
     @DeleteMapping("/{id}")

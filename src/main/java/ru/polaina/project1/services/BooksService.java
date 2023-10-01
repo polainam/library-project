@@ -12,6 +12,7 @@ import ru.polaina.project1.models.Book;
 import ru.polaina.project1.models.Person;
 import ru.polaina.project1.repositories.BooksRepository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,6 +85,13 @@ public class BooksService {
     public void update(Person personId, int bookId) { //personId был int
         Book updatedBook = findOne(bookId);
         updatedBook.setPersonId(personId);
+
+        updatedBook.setDateOfReceiving(new Date()); //человек в это время взял книгу
+
         booksRepository.save(updatedBook);
+    }
+
+    public List<Book> findByTitleIsStartingWith(String query) {
+        return booksRepository.findByTitleIsStartingWith(query);
     }
 }
