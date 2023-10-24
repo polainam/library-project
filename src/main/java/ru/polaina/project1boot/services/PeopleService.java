@@ -1,23 +1,31 @@
 package ru.polaina.project1boot.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.polaina.project1boot.models.Person;
 import ru.polaina.project1boot.repositories.PeopleRepository;
+import ru.polaina.project1boot.security.PersonDetails;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-public class PeopleService {
+public class PeopleService implements UserDetailsService {
 
     private final PeopleRepository peopleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public PeopleService(PeopleRepository peopleRepository) {
+    public PeopleService(PeopleRepository peopleRepository, @Lazy PasswordEncoder passwordEncoder) {
         this.peopleRepository = peopleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Person> findAll() {
@@ -26,6 +34,8 @@ public class PeopleService {
 
     @Transactional
     public void save(Person person) {
+        String encodedPassword = passwordEncoder.encode(person.getPassword());
+        person.setPassword(encodedPassword);
         peopleRepository.save(person);
     }
 
@@ -47,5 +57,14 @@ public class PeopleService {
     @Transactional
     public void delete(int id) {
         peopleRepository.deleteById(id);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        Optional<Person> person = peopleRepository.findByFullName(s);
+        if (person.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return new PersonDetails(person.get());
     }
 }

@@ -26,7 +26,7 @@ public class PersonValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Person person = (Person) target;
         if (peopleService.findByName(person.getFullName()).isPresent()) {
-            errors.rejectValue("fullName", "", "This name is already taken");
+            errors.rejectValue("fullName", "", "This username is already taken");
         }
     }
 }

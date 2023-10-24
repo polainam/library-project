@@ -30,6 +30,12 @@
 
 <br>
 
+<form th:action="@{/logout}">
+    <input type="submit" value="Logout">
+</form>
+
+<br>
+
 <form th:method="DELETE" th:action="@{/people/{id}(id=${infoAboutPerson.getPersonId()})}">
     <input type="submit" value="Delete">
 </form>

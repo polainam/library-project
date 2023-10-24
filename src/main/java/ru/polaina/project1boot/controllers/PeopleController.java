@@ -4,27 +4,21 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.polaina.project1boot.models.Book;
 import ru.polaina.project1boot.models.Person;
 import ru.polaina.project1boot.services.BooksService;
 import ru.polaina.project1boot.services.PeopleService;
-import ru.polaina.project1boot.util.PersonValidator;
-
 import java.util.List;
 
 @Controller
 @RequestMapping("/people")
 public class PeopleController {
-
-    private final PersonValidator personValidator;
     private final PeopleService peopleService;
     private final BooksService booksService;
 
     @Autowired
-    public PeopleController(PersonValidator personValidator, PeopleService peopleService, BooksService bookService, BooksService booksService) {
-        this.personValidator = personValidator;
+    public PeopleController(PeopleService peopleService, BooksService bookService, BooksService booksService) {
         this.peopleService = peopleService;
         this.booksService = booksService;
     }
@@ -35,11 +29,10 @@ public class PeopleController {
         return "people/listOfPeople";
     }
 
-    @GetMapping("/new")
+/*    @GetMapping("/new")
     public String newPerson(@ModelAttribute("newPerson")Person person) {
         return "people/newPerson";
     }
-
     @PostMapping()
     public String insertNewPerson(@ModelAttribute("newPerson") @Valid Person person, BindingResult bindingResult) {
         personValidator.validate(person, bindingResult);
@@ -48,7 +41,7 @@ public class PeopleController {
         }
         peopleService.save(person);
         return "redirect:/people";
-    }
+    }*/
 
     @GetMapping("/{id}")
     public String pagePerson(@PathVariable("id") int id, Model model) {

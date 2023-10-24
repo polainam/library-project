@@ -17,8 +17,8 @@ public class Person {
     private int personId;
 
     @NotEmpty(message = "Full name should not be empty")
-    @Pattern(regexp = "[A-Za-z]+ [A-Za-z]+ [A-Za-z]+",
-            message = "Full name should be in this format: Surname Name Patronymic")
+    @Pattern(regexp = "[A-Za-z]+ [A-Za-z]+",
+            message = "Full name should be in this format: Surname Name")
     @Column(name = "full_name")
     private String fullName;
 
@@ -28,6 +28,9 @@ public class Person {
 
     @OneToMany(mappedBy = "personId", fetch = FetchType.LAZY)
     private List<Book> books;
+
+    @Column(name = "password")
+    private String password;
     public int getPersonId() {
         return personId;
     }
@@ -58,5 +61,13 @@ public class Person {
 
     public void setBooks(List<Book> books) {
         this.books = books;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
