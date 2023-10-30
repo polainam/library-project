@@ -36,6 +36,7 @@ public class PeopleService implements UserDetailsService {
     public void save(Person person) {
         String encodedPassword = passwordEncoder.encode(person.getPassword());
         person.setPassword(encodedPassword);
+        person.setRole("ROLE_USER");
         peopleRepository.save(person);
     }
 
