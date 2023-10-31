@@ -43,14 +43,14 @@ public class PeopleController {
         return "redirect:/people";
     }*/
 
-    @GetMapping("/{id}")
+/*    @GetMapping("/{id}")
     public String pagePerson(@PathVariable("id") int id, Model model) {
         Person person = peopleService.findOne(id);
         List<Book> books = booksService.findByPersonId(person);
         model.addAttribute("books", books);
         model.addAttribute("infoAboutPerson", person);
         return "people/pagePerson";
-    }
+    }*/
 
     @GetMapping("/{id}/edit")
     public String personEditPage(@PathVariable("id") int id, Model model) {

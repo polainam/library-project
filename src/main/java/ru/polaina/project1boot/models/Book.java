@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "Book")
@@ -17,9 +18,12 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookId;
 
-    @ManyToOne
+/*    @ManyToOne
     @JoinColumn(name = "person_id", referencedColumnName = "id")
-    private Person personId;
+    private Person personId;*/
+
+    @OneToMany(mappedBy = "book")
+    private List<Journal> journalEntries;
 
     @NotEmpty(message = "Title should not be empty")
     @Column(name = "title")
@@ -32,13 +36,16 @@ public class Book {
     @Column(name = "year_of_publishing")
     private int yearOfPublishing;
 
-    @Column(name = "date_of_receiving")
+    @Column(name = "number_of_copies")
+    private int numberOfCopies;
+
+/*    @Column(name = "date_of_receiving")
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date dateOfReceiving;
+    private Date dateOfReceiving;*/
 
-    @Transient
-    private boolean isReturnTimeOverdue;
+/*    @Transient
+    private boolean isReturnTimeOverdue;*/
 
     public int getBookId() {
         return bookId;
@@ -48,13 +55,13 @@ public class Book {
         this.bookId = bookId;
     }
 
-    public Person getPersonId() {
+/*    public Person getPersonId() {
         return personId;
     }
 
     public void setPersonId(Person personId) {
         this.personId = personId;
-    }
+    }*/
 
     public String getTitle() {
         return title;
@@ -79,7 +86,15 @@ public class Book {
         this.yearOfPublishing = yearOfPublishing;
     }
 
-    public Date getDateOfReceiving() {
+    public List<Journal> getJournalEntries() {
+        return journalEntries;
+    }
+
+    public void setJournalEntries(List<Journal> journalEntries) {
+        this.journalEntries = journalEntries;
+    }
+
+    /*    public Date getDateOfReceiving() {
         return dateOfReceiving;
     }
 
@@ -93,9 +108,21 @@ public class Book {
         long differenceInDays = TimeUnit.MILLISECONDS.toDays(differenceInMillis);
 
         return differenceInDays > 10;
+    }*/
+
+/*    public void setReturnTimeOverdue(boolean returnTimeOverdue) {
+        isReturnTimeOverdue = returnTimeOverdue;
+    }*/
+
+    public int getNumberOfCopies() {
+        return numberOfCopies;
     }
 
-    public void setReturnTimeOverdue(boolean returnTimeOverdue) {
-        isReturnTimeOverdue = returnTimeOverdue;
+    public void setNumberOfCopies(int numberOfCopies) {
+        this.numberOfCopies = numberOfCopies;
+    }
+
+    public void reduceNumberOfCopies() {
+        setNumberOfCopies(getNumberOfCopies() - 1);
     }
 }

@@ -26,8 +26,8 @@ public class Person {
     @Column(name = "year_of_birth")
     private int yearOfBirth;
 
-    @OneToMany(mappedBy = "personId", fetch = FetchType.LAZY)
-    private List<Book> books;
+    @OneToMany(mappedBy = "person")
+    private List<Journal> journalEntries;
 
     @Column(name = "password")
     private String password;
@@ -58,6 +58,7 @@ public class Person {
         this.yearOfBirth = yearOfBirth;
     }
 
+/*
     public List<Book> getBooks() {
         return books;
     }
@@ -65,6 +66,7 @@ public class Person {
     public void setBooks(List<Book> books) {
         this.books = books;
     }
+*/
 
     public String getPassword() {
         return password;
