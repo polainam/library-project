@@ -91,7 +91,6 @@ public class BooksController {
 
     @PatchMapping ("/{book_id}/{person_id}/reserve")
     public String reserve(@PathVariable("book_id") int bookId, @PathVariable("person_id") int personId, Journal journal, Model model) {
-        //сделать нормальное сохранение в бд через транзакцию
         Date dateReserve = new Timestamp(System.currentTimeMillis());
         journal.setDateReserve(dateReserve);
         Book book = bookService.findOne(bookId);
@@ -145,5 +144,13 @@ public class BooksController {
     public String deleteBook(@PathVariable("id") int id) {
         bookService.delete(id);
         return "redirect:/books";
+    }
+
+    @DeleteMapping("/{book_id}/{person_id}/reserve")
+    public String deleteReservation(@PathVariable("book_id") int bookId, @PathVariable("person_id") int personId, Model model) {
+        Journal journalEntry = journalService.getJournalEntry(bookId, personId);
+        journalService.delete(journalEntry);
+
+        return "redirect:/books/" + bookId;
     }
 }
