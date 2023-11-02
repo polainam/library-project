@@ -13,7 +13,7 @@
 -->
 <div th:if="${isBookReserved == true}">
     <p th:text="${'You have reserved this book'}" />
-    <p th:text="${'The reservation will be valid for three days'}" />
+    <p th:text="${'You can receive the book until ' + dateEndReserve + ' inclusive'}" />
     <form th:method="DELETE" th:action="@{'/books/' + ${infoAboutBook.getBookId()} + '/' + ${infoAboutPerson.getPersonId()} + '/reserve'}">
         <input type="submit" value="Cancel reservation">
     </form>

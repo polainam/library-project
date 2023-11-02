@@ -30,22 +30,21 @@ public class Journal {
 
     @Column(name = "date_begin")
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateBegin;
     @Column(name = "date_end")
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateEnd;
-
-    @Column(name = "date_return")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date dateReturn;
 
     @Column(name = "date_reserve")
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateReserve;
+    @Column(name = "date_end_reserve")
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date dateEndReserve;
 
     public int getId() {
         return id;
@@ -67,12 +66,12 @@ public class Journal {
         this.dateEnd = dateEnd;
     }
 
-    public Date getDateReturn() {
-        return dateReturn;
+    public Date getDateEndReserve() {
+        return dateEndReserve;
     }
 
-    public void setDateReturn(Date dateReturn) {
-        this.dateReturn = dateReturn;
+    public void setDateEndReserve(Date dateEndReserve) {
+        this.dateEndReserve = dateEndReserve;
     }
 
     public Date getDateReserve() {

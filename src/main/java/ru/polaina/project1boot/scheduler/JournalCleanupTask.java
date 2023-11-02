@@ -14,18 +14,18 @@ import java.util.Date;
 public class JournalCleanupTask {
 
     private final JournalService journalService;
+    private static final int NUMBER_OF_DAYS_OF_RESERVE = 3;
 
     @Autowired
     public JournalCleanupTask(JournalService journalService) {
         this.journalService = journalService;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?") // Запускать каждый день в полночь
+    @Scheduled(cron = "0 * * * * ?") // Запускать каждый день в полночь
     public void cleanupExpiredReservations() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, -3); // Требуемый срок действия резерва (3 дня)
-
-        Date threeDaysAgo = calendar.getTime();
-        journalService.deleteExpiredReservations(threeDaysAgo);
+        //calendar.add(Calendar.DAY_OF_MONTH, -NUMBER_OF_DAYS_OF_RESERVE); // Требуемый срок действия резерва (3 дня)
+        Date currentDate = calendar.getTime();
+        journalService.deleteExpiredReservations(currentDate);
     }
 }

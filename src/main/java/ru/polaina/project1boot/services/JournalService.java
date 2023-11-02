@@ -30,7 +30,7 @@ public class JournalService {
 
     }
 
-    private Optional<Journal> findIdByBookIdAndPersonId(int bookId, int personId) {
+    public Optional<Journal> findIdByBookIdAndPersonId(int bookId, int personId) {
         return journalRepository.findIdByBookIdAndPersonId(bookId, personId);
     }
 
@@ -57,12 +57,13 @@ public class JournalService {
     }
 
     @Transactional
-    public void deleteExpiredReservations(Date expirationDate) {
-        journalRepository.deleteByDateReserveBefore(expirationDate);
+    public void deleteExpiredReservations(Date currentDate) {
+        journalRepository.deleteByDateEndReserveBefore(currentDate);
     }
 
     @Transactional
     public void delete(Journal journalEntry) {
         journalRepository.delete(journalEntry);
     }
+
 }

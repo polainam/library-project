@@ -17,9 +17,8 @@ import ru.polaina.project1boot.services.PeopleService;
 import ru.polaina.project1boot.util.BookValidator;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("/books")
@@ -28,8 +27,9 @@ public class BooksController {
     private final BooksService bookService;
     private  final JournalService journalService;
     private final BookValidator bookValidator;
-
     private final PeopleService peopleService;
+
+    private static final int NUMBER_OF_DAYS_OF_RESERVE = 3;
 
     @Autowired
     public BooksController(BooksService bookService, JournalService journalService, BookValidator bookValidator, PeopleService peopleService) {
@@ -77,11 +77,15 @@ public class BooksController {
 
     @GetMapping("/{id}")
     public String pageBook(@PathVariable("id") int id, Authentication authentication, Model model) {
-        //отобразить резерв на странице человека
         Book book = bookService.findOne(id);
         Person person = ((PersonDetails) authentication.getPrincipal()).getPerson();
         boolean isBookReserved = journalService.isBookReserved(id, person.getPersonId());
-
+        if (isBookReserved) {
+            Date dateEndReserve = journalService.getJournalEntry(id, person.getPersonId()).getDateEndReserve();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = sdf.format(dateEndReserve);
+            model.addAttribute("dateEndReserve", formattedDate);
+        }
         model.addAttribute("isBookReserved", isBookReserved);
         model.addAttribute("infoAboutBook", book);
         model.addAttribute("infoAboutPerson", person);
@@ -93,12 +97,21 @@ public class BooksController {
     public String reserve(@PathVariable("book_id") int bookId, @PathVariable("person_id") int personId, Journal journal, Model model) {
         Date dateReserve = new Timestamp(System.currentTimeMillis());
         journal.setDateReserve(dateReserve);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateReserve);
+        calendar.add(Calendar.DAY_OF_MONTH, NUMBER_OF_DAYS_OF_RESERVE);
+        Date dateEndReserve = calendar.getTime();
+        journal.setDateEndReserve(dateEndReserve);
+
         Book book = bookService.findOne(bookId);
         book.reduceNumberOfCopies();
         bookService.save(book);
         journal.setBook(book);
+
         Person person = peopleService.findOne(personId);
         journal.setPerson(person);
+
         journalService.save(journal);
 
         return "redirect:/books/" + bookId;
