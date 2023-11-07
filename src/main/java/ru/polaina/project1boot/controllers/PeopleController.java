@@ -6,21 +6,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.polaina.project1boot.models.Book;
+import ru.polaina.project1boot.models.Journal;
 import ru.polaina.project1boot.models.Person;
 import ru.polaina.project1boot.services.BooksService;
+import ru.polaina.project1boot.services.JournalService;
 import ru.polaina.project1boot.services.PeopleService;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/people")
 public class PeopleController {
     private final PeopleService peopleService;
-    private final BooksService booksService;
+    private final JournalService journalService;
 
     @Autowired
-    public PeopleController(PeopleService peopleService, BooksService bookService, BooksService booksService) {
+    public PeopleController(PeopleService peopleService, JournalService journalService) {
         this.peopleService = peopleService;
-        this.booksService = booksService;
+        this.journalService = journalService;
     }
 
     @GetMapping()
@@ -43,14 +46,15 @@ public class PeopleController {
         return "redirect:/people";
     }*/
 
-/*    @GetMapping("/{id}")
+    @GetMapping("/{id}")
     public String pagePerson(@PathVariable("id") int id, Model model) {
         Person person = peopleService.findOne(id);
-        List<Book> books = booksService.findByPersonId(person);
-        model.addAttribute("books", books);
         model.addAttribute("infoAboutPerson", person);
+        List<Journal> reservedBooks = journalService.findByPersonIdAndDateReserveNotNull(person.getPersonId());
+        model.addAttribute("reservedBooks", reservedBooks);
+
         return "people/pagePerson";
-    }*/
+    }
 
     @GetMapping("/{id}/edit")
     public String personEditPage(@PathVariable("id") int id, Model model) {

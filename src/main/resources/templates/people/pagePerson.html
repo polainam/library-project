@@ -8,16 +8,16 @@
 
 <p th:text="${infoAboutPerson.getFullName() + ', ' + infoAboutPerson.getYearOfBirth()}"></p>
 
-<div th:if="${books.isEmpty()}">
-    <p th:text="${'The person has not yet taken a single book'}"></p>
+<div th:if="${reservedBooks.isEmpty()}">
+    <p th:text="${'You did not take a single book'}"></p>
 </div>
 
-<div th:if="${!books.isEmpty()}">
-    <b th:text="${'Books:'}"></b>
-    <div th:each="book : ${books}">
-        <p th:style="'color: ' + (${book.isReturnTimeOverdue()} ? 'red' : 'black')">
-            <span th:text="${book.getTitle() + ', ' + book.getWriter() + ', ' + book.getYearOfPublishing()}"></span>
-        </p>
+<div th:if="${!reservedBooks.isEmpty()}">
+    <b th:text="${'Reserved books:'}"></b>
+    <div th:each="book : ${reservedBooks}">
+        <a th:href="@{'/books/' + ${book.getBookId()}}">
+        <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
+        </a>
     </div>
 </div>
 <br>

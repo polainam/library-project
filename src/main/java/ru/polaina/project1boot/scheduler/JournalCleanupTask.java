@@ -21,7 +21,7 @@ public class JournalCleanupTask {
         this.journalService = journalService;
     }
 
-    @Scheduled(cron = "0 * * * * ?") // Запускать каждый день в полночь
+    @Scheduled(cron = "0 0 0 * * ?") // Запускать каждый день в полночь
     public void cleanupExpiredReservations() {
         Calendar calendar = Calendar.getInstance();
         //calendar.add(Calendar.DAY_OF_MONTH, -NUMBER_OF_DAYS_OF_RESERVE); // Требуемый срок действия резерва (3 дня)

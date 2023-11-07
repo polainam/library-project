@@ -3,7 +3,6 @@ package ru.polaina.project1boot.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.polaina.project1boot.models.Book;
 import ru.polaina.project1boot.models.Journal;
 import ru.polaina.project1boot.repositories.JournalRepository;
 
@@ -66,4 +65,7 @@ public class JournalService {
         journalRepository.delete(journalEntry);
     }
 
+    public List<Journal> findByPersonIdAndDateReserveNotNull(int personId) {
+        return journalRepository.findByPersonIdAndDateReserveNotNull(personId);
+    }
 }

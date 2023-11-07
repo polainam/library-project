@@ -16,10 +16,9 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
         <input type="text" name="query" placeholder="Enter text to search: ">
     </label>
     <button type="submit" class="button-spacing">Search</button>
-    <div sec:authorize="hasRole('ADMIN')">
+<!--    <div sec:authorize="hasRole('ADMIN')">
     <a href="/books/new" class="button-spacing">Create book</a>
-</div>
-
+</div>-->
 </form>
 <br>
 <div th:if="${books.isEmpty()}">
@@ -32,5 +31,8 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     </div>
 </div>
 <br>
+<form th:method="GET" th:action="@{/people/{id}(id=${personId})}">
+    <input type="submit" value="Profile">
+</form>
 </body>
 </html>

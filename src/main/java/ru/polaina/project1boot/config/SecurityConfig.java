@@ -15,7 +15,7 @@ import ru.polaina.project1boot.services.PeopleService;
 
 @Configuration
 @EnableWebSecurity
-//@EnableMethodSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final PeopleService peopleService;

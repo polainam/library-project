@@ -20,4 +20,6 @@ public interface JournalRepository extends JpaRepository<Journal, Integer> {
     //void deleteByDateReserveBefore(Date expirationDate);
 
     void deleteByDateEndReserveBefore(Date currentDate);
+
+    List<Journal> findByPersonIdAndDateReserveNotNull(int personId);
 }

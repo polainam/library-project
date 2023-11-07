@@ -2,6 +2,7 @@ package ru.polaina.project1boot.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,11 +40,13 @@ public class BooksController {
         this.peopleService = peopleService;
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping()
     public String listOfBooks(Model model,
                               @RequestParam(value = "page", required = false) Integer page,
                               @RequestParam(value = "books_per_page", required = false) Integer booksPerPage,
-                              @RequestParam(value = "sort_by_year", required = false) String sortByYear) {
+                              @RequestParam(value = "sort_by_year", required = false) String sortByYear,
+                              Authentication authentication) {
         if (page != null && booksPerPage != null && !Objects.equals(sortByYear, "true")) {
             model.addAttribute("books", bookService.findAll(page, booksPerPage));
         }
@@ -56,8 +59,11 @@ public class BooksController {
         else {
             model.addAttribute("books", bookService.findAll());
         }
+        Person person = ((PersonDetails) authentication.getPrincipal()).getPerson();
+        model.addAttribute("personId", person.getPersonId());
 
-        return "books/listOfBooks";
+
+        return "books/user/listOfBooks";
     }
 
     @GetMapping("/new")
@@ -75,8 +81,14 @@ public class BooksController {
         return "redirect:/books";
     }
 
+/*    @GetMapping("/{id}")
+    public String pageBookForAdmin(@PathVariable("id") int id, Authentication authentication, Model model) {
+
+    }*/
+
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{id}")
-    public String pageBook(@PathVariable("id") int id, Authentication authentication, Model model) {
+    public String pageBookForUser(@PathVariable("id") int id, Authentication authentication, Model model) {
         Book book = bookService.findOne(id);
         Person person = ((PersonDetails) authentication.getPrincipal()).getPerson();
         boolean isBookReserved = journalService.isBookReserved(id, person.getPersonId());
@@ -90,7 +102,7 @@ public class BooksController {
         model.addAttribute("infoAboutBook", book);
         model.addAttribute("infoAboutPerson", person);
 
-        return "books/pageBookForUser";
+        return "books/user/pageBook";
     }
 
     @PatchMapping ("/{book_id}/{person_id}/reserve")
