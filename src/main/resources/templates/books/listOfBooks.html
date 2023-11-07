@@ -16,9 +16,10 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
         <input type="text" name="query" placeholder="Enter text to search: ">
     </label>
     <button type="submit" class="button-spacing">Search</button>
-<!--    <div sec:authorize="hasRole('ADMIN')">
-    <a href="/books/new" class="button-spacing">Create book</a>
-</div>-->
+    <div sec:authorize="hasRole('ADMIN')">
+        <a href="/people" class="button-spacing">People</a>
+        <a href="/books/new" class="button-spacing">Create book</a>
+</div>
 </form>
 <br>
 <div th:if="${books.isEmpty()}">
@@ -26,13 +27,22 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 </div>
 <div th:unless="${books.isEmpty()}">
     <div th:each="book : ${books}">
-        <a th:href="@{/books/{id}(id=${book.getBookId()}) }"
+        <div sec:authorize="hasRole('USER')">
+        <a th:href="@{/books/user/{id}(id=${book.getBookId()}) }"
            th:text="${book.getTitle() + ', ' + book.getWriter + ', ' + book.getYearOfPublishing()}"></a>
-    </div>
+        </div>
+        <div sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/books/admin/{id}(id=${book.getBookId()}) }"
+               th:text="${book.getTitle() + ', ' + book.getWriter + ', ' + book.getYearOfPublishing()}"></a>
+        </div>
 </div>
 <br>
+
+<div sec:authorize="hasRole('USER')">
 <form th:method="GET" th:action="@{/people/{id}(id=${personId})}">
     <input type="submit" value="Profile">
 </form>
+</div>
+
 </body>
 </html>

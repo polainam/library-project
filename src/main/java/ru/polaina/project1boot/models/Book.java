@@ -125,4 +125,8 @@ public class Book {
     public void reduceNumberOfCopies() {
         setNumberOfCopies(getNumberOfCopies() - 1);
     }
+
+    public void increaseNumberOfCopies() {
+        setNumberOfCopies(getNumberOfCopies() + 1);
+    }
 }

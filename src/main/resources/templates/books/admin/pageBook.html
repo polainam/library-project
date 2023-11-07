@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Page Book</title>
+</head>
+<body>
+<p th:text="${infoAboutBook.getTitle() + ', ' + infoAboutBook.getWriter() + ', ' + infoAboutBook.getYearOfPublishing()}"></p>
+<br>
+
+<div th:if="${countBooks == 0}">
+    <p th:text="${'No free copies'}" />
+</div>
+
+<div th:if="${isOne}">
+    <p th:text="${countBooks + ' copy left'}" />
+</div>
+
+<div th:if="${countBooks > 1}">
+    <p th:text="${countBooks + ' copies left'}" />
+</div>
+<br>
+<!--<div th:if="${infoAboutBook.personId == null}">
+    <form th:method="PATCH" th:action="@{'/books/'+${infoAboutBook.getBookId()}+'/nonfree'}">
+        <p th:text="${'This book is free. To whom should it be assigned?'}"></p>
+        <p th:text="${'Choose a person'}"></p>
+        <select name="personId">
+            <option th:each="person : ${people}"
+                    th:value="${person.getPersonId()}"
+                    th:text="${person.getFullName()}"></option>
+        </select>
+        <input type="submit" value="Assign book">
+    </form>
+</div>-->
+
+<!--<div th:if="${infoAboutBook.personId != null}">
+    <p th:text="${'The book is now at: ' + infoAboutPerson.getFullName()}"></p>
+    <br>
+    <form th:method="PATCH" th:action="@{'/books/'+${infoAboutBook.getBookId()}+'/free'}">
+        <input type="submit" value="Free book">
+    </form>
+</div>-->
+
+<!--<form th:method="GET" th:action="@{/books/{id}/edit(id=${infoAboutBook.getBookId()})}">-->
+<!--    <input type="submit" value="Edit">-->
+<!--</form>-->
+<!--<br>-->
+<!--<form th:method="DELETE" th:action="@{/books/{id}(id=${infoAboutBook.getBookId()})}">-->
+<!--    <input type="submit" value="Delete">-->
+<!--</form>-->
+</body>
+</html>

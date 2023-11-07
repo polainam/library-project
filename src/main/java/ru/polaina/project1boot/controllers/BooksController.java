@@ -40,7 +40,6 @@ public class BooksController {
         this.peopleService = peopleService;
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping()
     public String listOfBooks(Model model,
                               @RequestParam(value = "page", required = false) Integer page,
@@ -63,7 +62,7 @@ public class BooksController {
         model.addAttribute("personId", person.getPersonId());
 
 
-        return "books/user/listOfBooks";
+        return "books/listOfBooks";
     }
 
     @GetMapping("/new")
@@ -86,8 +85,7 @@ public class BooksController {
 
     }*/
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/{id}")
+    @GetMapping("/user/{id}")
     public String pageBookForUser(@PathVariable("id") int id, Authentication authentication, Model model) {
         Book book = bookService.findOne(id);
         Person person = ((PersonDetails) authentication.getPrincipal()).getPerson();
@@ -103,6 +101,22 @@ public class BooksController {
         model.addAttribute("infoAboutPerson", person);
 
         return "books/user/pageBook";
+    }
+
+    @GetMapping("/admin/{id}")
+    public String pageBookForAdmin(@PathVariable("id") int id, Model model) {
+        Book book = bookService.findOne(id);
+        int countBooks = book.getNumberOfCopies();
+        if (countBooks == 1) {
+            model.addAttribute("isOne", true);
+        }
+        else {
+            model.addAttribute("isOne", false);
+        }
+        model.addAttribute("infoAboutBook", book);
+        model.addAttribute("countBooks", countBooks);
+
+        return "books/admin/pageBook";
     }
 
     @PatchMapping ("/{book_id}/{person_id}/reserve")
@@ -126,7 +140,7 @@ public class BooksController {
 
         journalService.save(journal);
 
-        return "redirect:/books/" + bookId;
+        return "redirect:/books/user/" + bookId;
     }
 
 /*    @PatchMapping("/{id}/free")
@@ -175,7 +189,10 @@ public class BooksController {
     public String deleteReservation(@PathVariable("book_id") int bookId, @PathVariable("person_id") int personId, Model model) {
         Journal journalEntry = journalService.getJournalEntry(bookId, personId);
         journalService.delete(journalEntry);
+        Book book = bookService.findOne(bookId);
+        book.increaseNumberOfCopies();
+        bookService.save(book);
 
-        return "redirect:/books/" + bookId;
+        return "redirect:/books/user/" + bookId;
     }
 }
