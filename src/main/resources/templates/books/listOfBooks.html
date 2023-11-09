@@ -36,10 +36,11 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
                th:text="${book.getTitle() + ', ' + book.getWriter + ', ' + book.getYearOfPublishing()}"></a>
         </div>
 </div>
+</div>
 <br>
 
 <div sec:authorize="hasRole('USER')">
-<form th:method="GET" th:action="@{/people/{id}(id=${personId})}">
+<form th:method="GET" th:action="@{/people/user/{id}(id=${personId})}">
     <input type="submit" value="Profile">
 </form>
 </div>

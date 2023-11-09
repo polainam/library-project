@@ -14,7 +14,6 @@ import java.util.Date;
 public class JournalCleanupTask {
 
     private final JournalService journalService;
-    private static final int NUMBER_OF_DAYS_OF_RESERVE = 3;
 
     @Autowired
     public JournalCleanupTask(JournalService journalService) {
@@ -24,7 +23,6 @@ public class JournalCleanupTask {
     @Scheduled(cron = "0 0 0 * * ?") // Запускать каждый день в полночь
     public void cleanupExpiredReservations() {
         Calendar calendar = Calendar.getInstance();
-        //calendar.add(Calendar.DAY_OF_MONTH, -NUMBER_OF_DAYS_OF_RESERVE); // Требуемый срок действия резерва (3 дня)
         Date currentDate = calendar.getTime();
         journalService.deleteExpiredReservations(currentDate);
     }

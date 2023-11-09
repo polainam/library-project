@@ -46,8 +46,7 @@ public class JournalService {
 
     public Journal getJournalEntry(int bookId, int personId) {
         Optional<Journal> journalEntry = findIdByBookIdAndPersonId(bookId, personId);
-
-        return journalRepository.findById(journalEntry.get().getId()).orElse(null);
+        return journalEntry.orElse(null);
     }
 
     @Transactional
@@ -68,4 +67,28 @@ public class JournalService {
     public List<Journal> findByPersonIdAndDateReserveNotNull(int personId) {
         return journalRepository.findByPersonIdAndDateReserveNotNull(personId);
     }
+
+    public List<Journal> findByPersonIdAndDateBeginNotNull(int personId) {
+        return journalRepository.findByPersonIdAndDateBeginNotNull(personId);
+    }
+
+    public boolean isBookBorrowed(int bookId, int personId) {
+        Optional<Journal> journalEntry = findIdByBookIdAndPersonId(bookId, personId);
+
+        if (journalEntry.isPresent()) {
+            Journal journal = journalRepository.findById(journalEntry.get().getId()).orElse(null); // null никогда не будет
+            return journal != null && journal.getDateBegin() != null;
+        }
+        return false;
+    }
+
+    public List<Journal> findAllByPersonId(int personId) {
+        return journalRepository.findAllByPersonId(personId);
+    }
+
+    public Integer countAllByPersonId(int personId) {
+        return journalRepository.countAllByPersonId(personId);
+    }
+
+
 }

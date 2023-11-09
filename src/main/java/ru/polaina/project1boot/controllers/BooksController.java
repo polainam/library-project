@@ -88,7 +88,9 @@ public class BooksController {
     @GetMapping("/user/{id}")
     public String pageBookForUser(@PathVariable("id") int id, Authentication authentication, Model model) {
         Book book = bookService.findOne(id);
+
         Person person = ((PersonDetails) authentication.getPrincipal()).getPerson();
+
         boolean isBookReserved = journalService.isBookReserved(id, person.getPersonId());
         if (isBookReserved) {
             Date dateEndReserve = journalService.getJournalEntry(id, person.getPersonId()).getDateEndReserve();
@@ -96,7 +98,20 @@ public class BooksController {
             String formattedDate = sdf.format(dateEndReserve);
             model.addAttribute("dateEndReserve", formattedDate);
         }
+
+        boolean isBookBorrowed = journalService.isBookBorrowed(id, person.getPersonId());
+        if (isBookBorrowed) {
+            Date dateEnd = journalService.getJournalEntry(id, person.getPersonId()).getDateEnd();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = sdf.format(dateEnd);
+            model.addAttribute("dateEnd", formattedDate);
+        }
+
+        Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(person.getPersonId());
+
+        model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
         model.addAttribute("isBookReserved", isBookReserved);
+        model.addAttribute("isBookBorrowed", isBookBorrowed);
         model.addAttribute("infoAboutBook", book);
         model.addAttribute("infoAboutPerson", person);
 

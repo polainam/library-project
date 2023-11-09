@@ -2,6 +2,7 @@ package ru.polaina.project1boot.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,21 +12,30 @@ import ru.polaina.project1boot.models.Person;
 import ru.polaina.project1boot.services.BooksService;
 import ru.polaina.project1boot.services.JournalService;
 import ru.polaina.project1boot.services.PeopleService;
+
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/people")
 public class PeopleController {
     private final PeopleService peopleService;
     private final JournalService journalService;
+    private final BooksService booksService;
+
+    private static final int NUMBER_OF_READING_DAYS = 31;
+
 
     @Autowired
-    public PeopleController(PeopleService peopleService, JournalService journalService) {
+    public PeopleController(PeopleService peopleService, JournalService journalService, BooksService booksService) {
         this.peopleService = peopleService;
         this.journalService = journalService;
+        this.booksService = booksService;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping()
     public String listOfPeople(Model model) {
         model.addAttribute("people", peopleService.findAll());
@@ -46,14 +56,42 @@ public class PeopleController {
         return "redirect:/people";
     }*/
 
-    @GetMapping("/{id}")
-    public String pagePerson(@PathVariable("id") int id, Model model) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/admin/{id}")
+    public String pagePersonForAdmin(@PathVariable("id") int id, Model model) {
         Person person = peopleService.findOne(id);
         model.addAttribute("infoAboutPerson", person);
         List<Journal> reservedBooks = journalService.findByPersonIdAndDateReserveNotNull(person.getPersonId());
         model.addAttribute("reservedBooks", reservedBooks);
+        List<Journal> borrowedBooks = journalService.findByPersonIdAndDateBeginNotNull(person.getPersonId());
+        model.addAttribute("borrowedBooks", borrowedBooks);
 
-        return "people/pagePerson";
+        List<Journal> journalList = journalService.findAllByPersonId(id);
+        List<Book> books = booksService.findAll();
+        for (Journal bookFromJournalList:journalList) {
+            if (bookFromJournalList.getDateBegin() != null) {
+                Book book = bookFromJournalList.getBook();
+                books.remove(book);
+            }
+        }
+        books.removeIf(book -> book.getNumberOfCopies() == 0);
+        model.addAttribute("books", books);
+
+
+        return "people/admin/pagePerson";
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/user/{id}")
+    public String pagePersonForUser(@PathVariable("id") int id, Model model) {
+        Person person = peopleService.findOne(id);
+        model.addAttribute("infoAboutPerson", person);
+        List<Journal> reservedBooks = journalService.findByPersonIdAndDateReserveNotNull(person.getPersonId());
+        model.addAttribute("reservedBooks", reservedBooks);
+        List<Journal> borrowedBooks = journalService.findByPersonIdAndDateBeginNotNull(person.getPersonId());
+        model.addAttribute("borrowedBooks", borrowedBooks);
+
+        return "people/user/pagePerson";
     }
 
     @GetMapping("/{id}/edit")
@@ -73,5 +111,39 @@ public class PeopleController {
     public String deletePerson(@PathVariable("id") int id) {
         peopleService.delete(id);
         return "redirect:/people";
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("/{id}/assign")
+    public String assignBook(@PathVariable("id") int personId, @RequestParam int bookId, Journal journal, Model model) {
+        Journal journalEntry = journalService.getJournalEntry(bookId, personId);
+        if (journalEntry != null) {
+            journal = journalEntry;
+            journal.setDateReserve(null);
+            journal.setDateEndReserve(null);
+        }
+
+        Date dateBegin = new Timestamp(System.currentTimeMillis());
+        journal.setDateBegin(dateBegin);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateBegin);
+        calendar.add(Calendar.DAY_OF_MONTH, NUMBER_OF_READING_DAYS);
+        Date dateEnd = calendar.getTime();
+        journal.setDateEnd(dateEnd);
+
+        Book book = booksService.findOne(bookId);
+        if (journalEntry == null) {
+            book.reduceNumberOfCopies();
+            booksService.save(book);
+            journal.setBook(book);
+        }
+
+        Person person = peopleService.findOne(personId);
+        journal.setPerson(person);
+
+        journalService.save(journal);
+
+        return "redirect:/people/admin/" + personId;
     }
 }

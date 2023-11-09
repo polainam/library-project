@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page person</title>
+</head>
+<body>
+
+<p th:text="${infoAboutPerson.getFullName() + ', ' + infoAboutPerson.getYearOfBirth()}"></p>
+
+<div th:if="${reservedBooks.isEmpty() && borrowedBooks.isEmpty()}">
+    <p th:text="${'You did not take a single book'}"></p>
+
+</div>
+
+<div th:if="${!reservedBooks.isEmpty() && borrowedBooks.isEmpty()}">
+    <b th:text="${'Reserved books:'}"></b>
+    <div th:each="book : ${reservedBooks}">
+        <a th:href="@{'/books/user/' + ${book.getBookId()}}">
+            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
+        </a>
+    </div>
+</div>
+
+<div th:if="${reservedBooks.isEmpty() && !borrowedBooks.isEmpty()}">
+    <b th:text="${'Borrowed books:'}"></b>
+    <div th:each="book : ${borrowedBooks}">
+        <a th:href="@{'/books/user/' + ${book.getBookId()}}">
+            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
+        </a>
+    </div>
+</div>
+
+<div th:if="${!reservedBooks.isEmpty() && !borrowedBooks.isEmpty()}">
+    <b th:text="${'Reserved books:'}"></b>
+    <div th:each="book : ${reservedBooks}">
+        <a th:href="@{'/books/user/' + ${book.getBookId()}}">
+            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
+        </a>
+    </div>
+
+    <b th:text="${'Borrowed books:'}"></b>
+    <div th:each="book : ${borrowedBooks}">
+        <a th:href="@{'/books/user/' + ${book.getBookId()}}">
+            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
+        </a>
+    </div>
+</div>
+<br>
+
+<hr>
+
+<form th:method="GET" th:action="@{/people/{id}/edit(id=${infoAboutPerson.getPersonId()})}">
+    <input type="submit" value="Edit">
+</form>
+
+<br>
+
+<form th:method="POST" th:action="@{/logout}">
+    <input type="submit" value="Logout">
+</form>
+
+<br>
+
+<form th:method="DELETE" th:action="@{/people/{id}(id=${infoAboutPerson.getPersonId()})}">
+    <input type="submit" value="Delete">
+</form>
+
+</body>
+</html>
