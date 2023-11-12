@@ -35,12 +35,6 @@
         <input th:if="${reservedBooks.isEmpty() && countOfBooksTakenByPerson < 5}" type="submit" value="Assign">
     </form>
 
-<div th:unless="${reservedBooks.isEmpty()}">
-    <form th:method="PATCH" th:action="@{'/people/'+${infoAboutPerson.getPersonId()}+'/assignAllReserved'}">
-        <input type="submit" value="Assign all reserved">
-    </form>
-</div>
-
 <br>
 
 <!-- Секция отображения книг -->
@@ -48,6 +42,12 @@
     <p th:text="${'This person has no books'}"></p>
 </div>
 
+<div th:unless="${reservedBooks.isEmpty()}">
+    <form th:method="PATCH" th:action="@{'/people/'+${infoAboutPerson.getPersonId()}+'/assignAllReserved'}">
+        <input type="submit" value="Assign all reserved">
+    </form>
+</div>
+<br>
 <!-- Секция зарезервированных книг -->
 <div th:if="${!reservedBooks.isEmpty()}">
     <b th:text="${'Reserved books:'}"></b>
