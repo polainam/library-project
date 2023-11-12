@@ -68,4 +68,8 @@ public class PeopleService implements UserDetailsService {
         }
         return new PersonDetails(person.get());
     }
+
+    public List<Person> findAllUsers(String role) {
+        return peopleRepository.findAllByRole(role);
+    }
 }

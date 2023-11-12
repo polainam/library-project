@@ -20,7 +20,7 @@ public class JournalCleanupTask {
         this.journalService = journalService;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?") // Запускать каждый день в полночь
+    @Scheduled(cron = "0 0 0 * * ?")
     public void cleanupExpiredReservations() {
         Calendar calendar = Calendar.getInstance();
         Date currentDate = calendar.getTime();

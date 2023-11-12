@@ -38,7 +38,7 @@ public class PeopleController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping()
     public String listOfPeople(Model model) {
-        model.addAttribute("people", peopleService.findAll());
+        model.addAttribute("people", peopleService.findAllUsers("ROLE_USER"));
         return "people/listOfPeople";
     }
 
@@ -68,7 +68,7 @@ public class PeopleController {
 
         List<Journal> journalList = journalService.findAllByPersonId(id);
         List<Book> books = booksService.findAll();
-        for (Journal bookFromJournalList:journalList) {
+        for (Journal bookFromJournalList : journalList) {
             if (bookFromJournalList.getDateBegin() != null) {
                 Book book = bookFromJournalList.getBook();
                 books.remove(book);
@@ -76,7 +76,8 @@ public class PeopleController {
         }
         books.removeIf(book -> book.getNumberOfCopies() == 0);
         model.addAttribute("books", books);
-
+        Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(id);
+        model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
 
         return "people/admin/pagePerson";
     }
@@ -116,7 +117,30 @@ public class PeopleController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}/assign")
     public String assignBook(@PathVariable("id") int personId, @RequestParam int bookId, Journal journal, Model model) {
-        Journal journalEntry = journalService.getJournalEntry(bookId, personId);
+        Person person = peopleService.findOne(personId);
+        assignBook(journal, bookId, person);
+        Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(personId);
+        model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
+
+        return "redirect:/people/admin/" + personId;
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("/{id}/assignAllReserved")
+    public String assignAllReservedBooks(@PathVariable("id") int personId, Journal journal, Model model) {
+        Person person = peopleService.findOne(personId);
+        List<Journal> reservedBooks = journalService.findByPersonIdAndDateReserveNotNull(person.getPersonId());
+        for (Journal reservedBook: reservedBooks) {
+            assignBook(journal, reservedBook.getBookId(), person);
+        }
+        Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(personId);
+        model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
+
+        return "redirect:/people/admin/" + personId;
+    }
+
+    private void assignBook(Journal journal, int bookId, Person person) {
+        Journal journalEntry = journalService.getJournalEntry(bookId, person.getPersonId());
         if (journalEntry != null) {
             journal = journalEntry;
             journal.setDateReserve(null);
@@ -139,11 +163,8 @@ public class PeopleController {
             journal.setBook(book);
         }
 
-        Person person = peopleService.findOne(personId);
         journal.setPerson(person);
 
         journalService.save(journal);
-
-        return "redirect:/people/admin/" + personId;
     }
 }

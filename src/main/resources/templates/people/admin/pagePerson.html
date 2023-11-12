@@ -6,70 +6,65 @@
 </head>
 <body>
 
+<!-- Отображение информации о человеке -->
 <p th:text="${infoAboutPerson.getFullName() + ', ' + infoAboutPerson.getYearOfBirth()}"></p>
 
-<form th:method="PATCH" th:action="@{'/people/'+${infoAboutPerson.getPersonId()}+'/assign'}">
-    <label>
-        <select name="bookId">
-            <option th:each="book : ${books}"
-                    th:value="${book.getBookId()}"
-                    th:text="${book.getTitle()}"></option>
-        </select>
-    </label>
-    <input type="submit" value="Assign">
-</form>
+<!-- Форма для назначения книги -->
+    <form th:method="PATCH" th:action="@{'/people/'+${infoAboutPerson.getPersonId()}+'/assign'}">
+        <label>
+            <select name="bookId">
+                <option th:each="book : ${books}" th:value="${book.getBookId()}" th:text="${book.getTitle()}"></option>
+            </select>
+        </label>
+        <input th:if="${countOfBooksTakenByPerson >= 5}" type="submit" value="Assign" disabled="disabled">
+        <span th:if="${countOfBooksTakenByPerson >= 5}" style="color: grey">The user cannot read more than 5 books</span>
+
+        <input th:if="${!reservedBooks.isEmpty()}" type="submit" value="Assign" disabled="disabled">
+        <span th:if="${!reservedBooks.isEmpty()}" style="color: grey">All reserved books must be assigned</span>
+
+        <input th:if="${reservedBooks.isEmpty() && countOfBooksTakenByPerson < 5}" type="submit" value="Assign">
+    </form>
+
+
+<!--<div th:unless="${countOfBooksTakenByPerson < 5}">
+    <p th:text="${'The user cannot read more than 5 books'}"></p>
+</div>-->
+
+<div th:unless="${reservedBooks.isEmpty()}">
+    <form th:method="PATCH" th:action="@{'/people/'+${infoAboutPerson.getPersonId()}+'/assignAllReserved'}">
+        <input type="submit" value="Assign all reserved">
+    </form>
+</div>
 
 <br>
 
+<!-- Секция отображения книг -->
 <div th:if="${reservedBooks.isEmpty() && borrowedBooks.isEmpty()}">
     <p th:text="${'This person has no books'}"></p>
-
 </div>
 
-<div th:if="${!reservedBooks.isEmpty() && borrowedBooks.isEmpty()}">
-    <b th:text="${'Reserved books:'}"></b>
-    <div th:each="book : ${reservedBooks}">
-        <a th:href="@{'/books/admin/' + ${book.getBookId()}}">
-        <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
-        </a>
-    </div>
-</div>
-
-<div th:if="${reservedBooks.isEmpty() && !borrowedBooks.isEmpty()}">
-    <b th:text="${'Borrowed books:'}"></b>
-    <div th:each="book : ${borrowedBooks}">
-        <a th:href="@{'/books/admin/' + ${book.getBookId()}}">
-            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
-        </a>
-    </div>
-</div>
-
-<div th:if="${!reservedBooks.isEmpty() && !borrowedBooks.isEmpty()}">
+<!-- Секция зарезервированных книг -->
+<div th:if="${!reservedBooks.isEmpty()}">
     <b th:text="${'Reserved books:'}"></b>
     <div th:each="book : ${reservedBooks}">
         <a th:href="@{'/books/admin/' + ${book.getBookId()}}">
             <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
         </a>
     </div>
-
-    <b th:text="${'Borrowed books:'}"></b>
-    <div th:each="book : ${borrowedBooks}">
-        <a th:href="@{'/books/admin/' + ${book.getBookId()}}">
-            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
-        </a>
-    </div>
 </div>
+
 <br>
 
-<hr>
+<!-- Секция взятых в аренду книг -->
+<div th:if="${!borrowedBooks.isEmpty()}">
+    <b th:text="${'Borrowed books:'}"></b>
+    <div th:each="book : ${borrowedBooks}">
+        <a th:href="@{'/books/admin/' + ${book.getBookId()}}">
+            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
+        </a>
+    </div>
+</div>
 
-<!--<form th:method="GET" th:action="@{/people/{id}/edit(id=${infoAboutPerson.getPersonId()})}">
-    <input type="submit" value="Edit">
-</form>-->
-
-<!--<form th:method="POST" th:action="@{/logout}">
-    <input type="submit" value="Logout">
-</form>-->
 <br>
 
 <form th:method="DELETE" th:action="@{/people/{id}(id=${infoAboutPerson.getPersonId()})}">
