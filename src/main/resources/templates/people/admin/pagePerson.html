@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Page person</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('select[name="bookId"]').select2();
+        });
+    </script>
 </head>
 <body>
 
@@ -11,11 +19,13 @@
 
 <!-- Форма для назначения книги -->
     <form th:method="PATCH" th:action="@{'/people/'+${infoAboutPerson.getPersonId()}+'/assign'}">
+
         <label>
             <select name="bookId">
                 <option th:each="book : ${books}" th:value="${book.getBookId()}" th:text="${book.getTitle()}"></option>
             </select>
         </label>
+
         <input th:if="${countOfBooksTakenByPerson >= 5}" type="submit" value="Assign" disabled="disabled">
         <span th:if="${countOfBooksTakenByPerson >= 5}" style="color: grey">The user cannot read more than 5 books</span>
 
@@ -24,11 +34,6 @@
 
         <input th:if="${reservedBooks.isEmpty() && countOfBooksTakenByPerson < 5}" type="submit" value="Assign">
     </form>
-
-
-<!--<div th:unless="${countOfBooksTakenByPerson < 5}">
-    <p th:text="${'The user cannot read more than 5 books'}"></p>
-</div>-->
 
 <div th:unless="${reservedBooks.isEmpty()}">
     <form th:method="PATCH" th:action="@{'/people/'+${infoAboutPerson.getPersonId()}+'/assignAllReserved'}">

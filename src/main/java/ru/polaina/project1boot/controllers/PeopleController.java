@@ -78,6 +78,7 @@ public class PeopleController {
         model.addAttribute("books", books);
         Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(id);
         model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
+        model.addAttribute("bookId", 0); // или любое начальное значение по умолчанию
 
         return "people/admin/pagePerson";
     }
@@ -121,6 +122,7 @@ public class PeopleController {
         assignBook(journal, bookId, person);
         Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(personId);
         model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
+        model.addAttribute("bookId", 0); // или любое начальное значение по умолчанию
 
         return "redirect:/people/admin/" + personId;
     }
@@ -135,6 +137,7 @@ public class PeopleController {
         }
         Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(personId);
         model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
+        model.addAttribute("bookId", 0); // или любое начальное значение по умолчанию
 
         return "redirect:/people/admin/" + personId;
     }
