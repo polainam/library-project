@@ -1,5 +1,6 @@
 package ru.polaina.project1boot.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -132,7 +133,7 @@ public class PeopleController {
     public String assignAllReservedBooks(@PathVariable("id") int personId, Journal journal, Model model) {
         Person person = peopleService.findOne(personId);
         List<Journal> reservedBooks = journalService.findByPersonIdAndDateReserveNotNull(person.getPersonId());
-        for (Journal reservedBook: reservedBooks) {
+        for (Journal reservedBook : reservedBooks) {
             assignBook(journal, reservedBook.getBookId(), person);
         }
         Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(personId);
@@ -169,5 +170,22 @@ public class PeopleController {
         journal.setPerson(person);
 
         journalService.save(journal);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/admin/return/{id}")
+    public String returnBorrowedBooks(@PathVariable("id") Person person, Model model) {
+        model.addAttribute("person", person);
+        List<Journal> borrowedBooks = journalService.findByPersonIdAndDateBeginNotNull(person.getPersonId());
+        model.addAttribute("borrowedBooks", borrowedBooks);
+
+        return "people/admin/return/returnBorrowedBooks";
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/return/{id}")
+    public String returnBooks(@PathVariable("id") int id, @RequestParam("returnedBooksId") List<Integer> returnedBooksId) {
+        journalService.returnBooks(returnedBooksId);
+        return "redirect:/people/admin/" + id;
     }
 }

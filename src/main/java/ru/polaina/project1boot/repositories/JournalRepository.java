@@ -28,4 +28,6 @@ public interface JournalRepository extends JpaRepository<Journal, Integer> {
 
     Integer countAllByPersonId(int personId);
 
+    void deleteByBookId(int id);
+
 }

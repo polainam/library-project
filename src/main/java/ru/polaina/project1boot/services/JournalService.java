@@ -3,6 +3,7 @@ package ru.polaina.project1boot.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.polaina.project1boot.models.Book;
 import ru.polaina.project1boot.models.Journal;
 import ru.polaina.project1boot.repositories.JournalRepository;
 
@@ -15,10 +16,12 @@ import java.util.Optional;
 public class JournalService {
 
     private final JournalRepository journalRepository;
+    private final BooksService booksService;
 
     @Autowired
-    public JournalService(JournalRepository journalRepository) {
+    public JournalService(JournalRepository journalRepository, BooksService booksService) {
         this.journalRepository = journalRepository;
+        this.booksService = booksService;
     }
 
     public List<Journal> findAllByBookId(int bookId) {
@@ -90,5 +93,14 @@ public class JournalService {
         return journalRepository.countAllByPersonId(personId);
     }
 
+    @Transactional
+    public void returnBooks(List<Integer> returnedBooksId) {
+        for (Integer id:returnedBooksId) {
+            journalRepository.deleteByBookId(id);
+            Book book = booksService.findOne(id);
+            book.increaseNumberOfCopies();
+            booksService.update(id, book);
+        }
+    }
 
 }

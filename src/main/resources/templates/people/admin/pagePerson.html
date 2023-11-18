@@ -72,6 +72,17 @@
 
 <br>
 
+<script th:inline="javascript">
+    var jsonObject = null;
+    console.log(jsonObject);
+</script>
+
+<form th:method="GET" th:action="@{'/people/admin/return/' + ${infoAboutPerson.getPersonId()}}">
+    <input type="submit" value="Return books">
+</form>
+
+<br>
+
 <form th:method="DELETE" th:action="@{/people/{id}(id=${infoAboutPerson.getPersonId()})}">
     <input type="submit" value="Block">
 </form>
