@@ -9,12 +9,17 @@
 <p th:text="${infoAboutBook.getTitle() + ', ' + infoAboutBook.getWriter() + ', ' + infoAboutBook.getYearOfPublishing()}"></p>
 <br>
 
-<div th:if="${isBookReserved == true && isBookBorrowed == false}">
+<div th:if="${isBookReserved == true}">
     <p th:text="${'The user can receive the book before ' + dateEndReserve + ' inclusive'}"></p>
 </div>
 
-<div th:if="${isBookBorrowed == true && isBookReserved == false}">
+<div th:if="${isBookBorrowed == true && currentDate.compareTo(dateEnd) < 0}">
     <p th:text="${'The book return deadline is ' + dateEnd + ' inclusive'}"></p>
+</div>
+
+<div th:if="${isBookBorrowed == true && currentDate.compareTo(dateEnd) > 0}">
+    <p th:text="${'User has expired this book'}"></p>
+    <p th:text="${'The deadline for returning the book was ' + dateEnd + ' inclusive'}"></p>
 </div>
 
 </body>

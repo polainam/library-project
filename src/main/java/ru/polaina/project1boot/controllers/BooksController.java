@@ -197,8 +197,10 @@ public class BooksController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/pageBookForPerson/{person_id}/{book_id}")
     public String pageBookForPerson(@PathVariable("person_id") int personId, @PathVariable("book_id") int bookId, Model model) {
-
         getInfoAboutBook(personId, bookId, model);
+        LocalDate localDate = LocalDate.now();
+        Date currentDate = java.sql.Date.valueOf(localDate);
+        model.addAttribute("currentDate", currentDate);
 
         return "/books/admin/pageBookForPerson";
     }

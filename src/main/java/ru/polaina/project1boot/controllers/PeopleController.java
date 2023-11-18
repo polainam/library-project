@@ -80,6 +80,8 @@ public class PeopleController {
         Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(id);
         model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
         model.addAttribute("bookId", 0); // или любое начальное значение по умолчанию
+        Date currentDate = Calendar.getInstance().getTime();
+        model.addAttribute("currentDate", currentDate);
 
         return "people/admin/pagePerson";
     }
