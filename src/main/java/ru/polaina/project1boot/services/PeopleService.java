@@ -2,12 +2,16 @@ package ru.polaina.project1boot.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.polaina.project1boot.models.Book;
 import ru.polaina.project1boot.models.Person;
 import ru.polaina.project1boot.repositories.PeopleRepository;
 import ru.polaina.project1boot.security.PersonDetails;
@@ -71,5 +75,16 @@ public class PeopleService implements UserDetailsService {
 
     public List<Person> findAllUsers(String role) {
         return peopleRepository.findAllByRole(role);
+    }
+
+/*    public List<Person> findAll(Integer page, Integer peoplePerPage) {
+        return peopleRepository.findAll(PageRequest.of(page, booksPerPage)).getContent();
+    }*/
+
+    public Page<Person> findUsersWithRole(Integer page, Integer peoplePerPage) {
+        String roleName = "ROLE_USER";
+        Pageable pageable = PageRequest.of(page, peoplePerPage);
+
+        return peopleRepository.findByRole(roleName, pageable);
     }
 }

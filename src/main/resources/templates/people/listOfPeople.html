@@ -6,11 +6,19 @@
 </head>
 <body>
 <div th:each="person : ${people}">
+    <br>
   <a th:href="@{/people/admin/{id}(id=${person.getPersonId()})}"
      th:text="${person.getFullName() + ', ' + person.getYearOfBirth()}"></a>
 </div>
 <br>
-<!--<hr>
-<a href="/people/new">Create person</a>-->
+<div th:if="${totalPages > 1}">
+    <div th:if="${currentPage > 0}">
+        <a th:href="@{'/people?page=' + ${currentPage - 1} + '&peoplePerPage=' + ${peoplePerPage}}" th:text="${'Previous'}"></a>
+    </div>
+
+    <div th:if="${currentPage < totalPages}">
+        <a th:href="@{'/people?page=' + ${currentPage + 1} + '&peoplePerPage=' + ${peoplePerPage}}" th:text="${'Next'}"></a>
+    </div>
+</div>
 </body>
 </html>

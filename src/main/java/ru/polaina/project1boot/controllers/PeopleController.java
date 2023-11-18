@@ -3,6 +3,7 @@ package ru.polaina.project1boot.controllers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/people")
@@ -38,8 +40,18 @@ public class PeopleController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping()
-    public String listOfPeople(Model model) {
-        model.addAttribute("people", peopleService.findAllUsers("ROLE_USER"));
+    public String listOfPeople(Model model,
+                               @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                               @RequestParam(value = "people_per_page", required = false, defaultValue = "10") Integer peoplePerPage) {
+        List<Person> users = peopleService.findAllUsers("ROLE_USER");
+        int totalPeople = users.size();
+        int totalPages = (int) Math.ceil((double) totalPeople / peoplePerPage) - 1;
+        Page<Person> people = peopleService.findUsersWithRole(page, peoplePerPage);
+        model.addAttribute("people", people);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("peoplePerPage", peoplePerPage);
+
         return "people/listOfPeople";
     }
 
