@@ -19,4 +19,5 @@ public interface BooksRepository extends JpaRepository<Book, Integer> {
     //List<Book> findByPersonId(Person personId);
 
     List<Book> findByTitleIsStartingWith(String query);
+
 }

@@ -43,28 +43,27 @@ public class BooksController {
 
     @GetMapping()
     public String listOfBooks(Model model,
-                              @RequestParam(value = "page", required = false) Integer page,
-                              @RequestParam(value = "books_per_page", required = false) Integer booksPerPage,
+                              @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                              @RequestParam(value = "books_per_page", required = false, defaultValue = "10") Integer booksPerPage,
                               @RequestParam(value = "sort_by_year", required = false) String sortByYear,
                               Authentication authentication) {
-        if (page != null && booksPerPage != null && !Objects.equals(sortByYear, "true")) {
-            model.addAttribute("books", bookService.findAll(page, booksPerPage));
-        }
-        else if (page == null && booksPerPage == null && Objects.equals(sortByYear, "true")) {
-            model.addAttribute("books", bookService.findAll("yearOfPublishing"));
-        }
-        else if (page != null && booksPerPage != null && Objects.equals(sortByYear, "true")) {
-            model.addAttribute("books", bookService.findAll(page, booksPerPage, "yearOfPublishing"));
-        }
-        else {
-            model.addAttribute("books", bookService.findAll());
-        }
+        int totalBooks = bookService.countAll();
+
+        int totalPages = (int) Math.ceil((double) totalBooks / booksPerPage) - 1;
+
+        List<Book> books = bookService.findAll(page, booksPerPage);
+
+        model.addAttribute("booksPerPage", booksPerPage);
+        model.addAttribute("books", books);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+
         Person person = ((PersonDetails) authentication.getPrincipal()).getPerson();
         model.addAttribute("personId", person.getPersonId());
 
-
         return "books/listOfBooks";
     }
+
 
     @GetMapping("/new")
     public String newBook(@ModelAttribute("newBook") Book book) {

@@ -17,6 +17,7 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     </label>
     <button type="submit" class="button-spacing">Search</button>
     <div sec:authorize="hasRole('ADMIN')">
+        <br>
         <a href="/people" class="button-spacing">People</a>
         <a href="/books/new" class="button-spacing">Create book</a>
 </div>
@@ -27,6 +28,7 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 </div>
 <div th:unless="${books.isEmpty()}">
     <div th:each="book : ${books}">
+        <br>
         <div sec:authorize="hasRole('USER')">
         <a th:href="@{/books/user/{id}(id=${book.getBookId()}) }"
            th:text="${book.getTitle() + ', ' + book.getWriter + ', ' + book.getYearOfPublishing()}"></a>
@@ -35,7 +37,17 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
             <a th:href="@{/books/admin/{id}(id=${book.getBookId()}) }"
                th:text="${book.getTitle() + ', ' + book.getWriter + ', ' + book.getYearOfPublishing()}"></a>
         </div>
+    </div>
 </div>
+<br>
+<div th:if="${totalPages > 1}">
+    <div th:if="${currentPage > 0}">
+        <a th:href="@{'/books?page=' + ${currentPage - 1} + '&books_per_page=' + ${booksPerPage}}" th:text="${'Previous'}"></a>
+    </div>
+
+    <div th:if="${currentPage < totalPages}">
+        <a th:href="@{'/books?page=' + ${currentPage + 1} + '&books_per_page=' + ${booksPerPage}}" th:text="${'Next'}"></a>
+    </div>
 </div>
 <br>
 

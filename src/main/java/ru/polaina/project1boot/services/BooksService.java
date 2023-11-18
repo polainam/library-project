@@ -96,4 +96,8 @@ public class BooksService {
     public List<Book> findByTitleIsStartingWith(String query) {
         return booksRepository.findByTitleIsStartingWith(query);
     }
+
+    public int countAll() {
+        return findAll().size();
+    }
 }
