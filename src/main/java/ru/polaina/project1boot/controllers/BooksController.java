@@ -19,6 +19,7 @@ import ru.polaina.project1boot.util.BookValidator;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -80,42 +81,42 @@ public class BooksController {
         return "redirect:/books";
     }
 
-/*    @GetMapping("/{id}")
-    public String pageBookForAdmin(@PathVariable("id") int id, Authentication authentication, Model model) {
-
-    }*/
-
     @GetMapping("/user/{id}")
     public String pageBookForUser(@PathVariable("id") int id, Authentication authentication, Model model) {
-        Book book = bookService.findOne(id);
-
         Person person = ((PersonDetails) authentication.getPrincipal()).getPerson();
-
-        boolean isBookReserved = journalService.isBookReserved(id, person.getPersonId());
-        if (isBookReserved) {
-            Date dateEndReserve = journalService.getJournalEntry(id, person.getPersonId()).getDateEndReserve();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String formattedDate = sdf.format(dateEndReserve);
-            model.addAttribute("dateEndReserve", formattedDate);
-        }
-
-        boolean isBookBorrowed = journalService.isBookBorrowed(id, person.getPersonId());
-        if (isBookBorrowed) {
-            Date dateEnd = journalService.getJournalEntry(id, person.getPersonId()).getDateEnd();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String formattedDate = sdf.format(dateEnd);
-            model.addAttribute("dateEnd", formattedDate);
-        }
-
+        model.addAttribute("infoAboutPerson", person);
         Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(person.getPersonId());
-
         model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
+        getInfoAboutBook(person.getPersonId(), id, model);
+        LocalDate localDate = LocalDate.now();
+        Date currentDate = java.sql.Date.valueOf(localDate);
+        model.addAttribute("currentDate", currentDate);
+
+        return "books/user/pageBook";
+    }
+
+    private void getInfoAboutBook(int personId, int bookId, Model model) {
+        Book book = bookService.findOne(bookId);
+
+        boolean isBookReserved = journalService.isBookReserved(bookId, personId);
+        if (isBookReserved) {
+            Date dateEndReserve = journalService.getJournalEntry(bookId, personId).getDateEndReserve();
+            /*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = sdf.format(dateEndReserve);*/
+            model.addAttribute("dateEndReserve", dateEndReserve);
+        }
+
+        boolean isBookBorrowed = journalService.isBookBorrowed(bookId, personId);
+        if (isBookBorrowed) {
+            Date dateEnd = journalService.getJournalEntry(bookId, personId).getDateEnd();
+           /* SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = sdf.format(dateEnd);*/
+            model.addAttribute("dateEnd", dateEnd);
+        }
+
         model.addAttribute("isBookReserved", isBookReserved);
         model.addAttribute("isBookBorrowed", isBookBorrowed);
         model.addAttribute("infoAboutBook", book);
-        model.addAttribute("infoAboutPerson", person);
-
-        return "books/user/pageBook";
     }
 
     @GetMapping("/admin/{id}")
@@ -158,23 +159,6 @@ public class BooksController {
         return "redirect:/books/user/" + bookId;
     }
 
-/*    @PatchMapping("/{id}/free")
-    public String freeBook(@PathVariable("id") int id, Model model) {
-        bookService.update(id);
-        model.addAttribute("infoAboutBook", bookService.findOne(id));
-        model.addAttribute("people", peopleService.findAll());
-        return "books/pageBook";
-    }*/
-
-/*    @PatchMapping("/{id}/nonfree")
-    public String assignBook(@PathVariable("id") int bookId, @RequestParam int personId, Model model) {
-        Person person = peopleService.findOne(personId);
-        bookService.update(person, bookId);
-        model.addAttribute("infoAboutBook", bookService.findOne(bookId));
-        model.addAttribute("infoAboutPerson", peopleService.findOne(personId));
-        return "books/pageBook";
-    }*/
-
     @GetMapping("/{id}/edit")
     public String bookEditPage(@PathVariable("id") int id, Model model) {
         model.addAttribute("editBook", bookService.findOne(id));
@@ -210,4 +194,13 @@ public class BooksController {
 
         return "redirect:/books/user/" + bookId;
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/admin/pageBookForPerson/{person_id}/{book_id}")
+    public String pageBookForPerson(@PathVariable("person_id") int personId, @PathVariable("book_id") int bookId, Model model) {
+
+        getInfoAboutBook(personId, bookId, model);
+
+        return "/books/admin/pageBookForPerson";
+    }
+
 }

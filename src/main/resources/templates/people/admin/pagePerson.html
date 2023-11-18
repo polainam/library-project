@@ -52,7 +52,7 @@
 <div th:if="${!reservedBooks.isEmpty()}">
     <b th:text="${'Reserved books:'}"></b>
     <div th:each="book : ${reservedBooks}">
-        <a th:href="@{'/books/admin/' + ${book.getBookId()}}">
+        <a th:href="@{'/books/admin/pageBookForPerson/' + ${infoAboutPerson.getPersonId()} + '/' + ${book.getBook().getBookId()}}">
             <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
         </a>
     </div>
@@ -64,18 +64,13 @@
 <div th:if="${!borrowedBooks.isEmpty()}">
     <b th:text="${'Borrowed books:'}"></b>
     <div th:each="book : ${borrowedBooks}">
-        <a th:href="@{'/books/admin/' + ${book.getBookId()}}">
+        <a th:href="@{'/books/admin/pageBookForPerson/' + ${infoAboutPerson.getPersonId()} + '/' + ${book.getBook().getBookId()}}">
             <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
         </a>
     </div>
 </div>
 
 <br>
-
-<script th:inline="javascript">
-    var jsonObject = null;
-    console.log(jsonObject);
-</script>
 
 <form th:method="GET" th:action="@{'/people/admin/return/' + ${infoAboutPerson.getPersonId()}}">
     <input type="submit" value="Return books">

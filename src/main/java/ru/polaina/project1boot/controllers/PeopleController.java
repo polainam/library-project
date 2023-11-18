@@ -93,6 +93,8 @@ public class PeopleController {
         model.addAttribute("reservedBooks", reservedBooks);
         List<Journal> borrowedBooks = journalService.findByPersonIdAndDateBeginNotNull(person.getPersonId());
         model.addAttribute("borrowedBooks", borrowedBooks);
+        Date currentDate = Calendar.getInstance().getTime();
+        model.addAttribute("currentDate", currentDate);
 
         return "people/user/pagePerson";
     }

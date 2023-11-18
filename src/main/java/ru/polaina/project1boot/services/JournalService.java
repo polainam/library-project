@@ -7,6 +7,7 @@ import ru.polaina.project1boot.models.Book;
 import ru.polaina.project1boot.models.Journal;
 import ru.polaina.project1boot.repositories.JournalRepository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -103,4 +104,13 @@ public class JournalService {
         }
     }
 
+/*    public List<Journal> getExpiredBooks(Date date, List<Journal> borrowedBooks) {
+        List<Journal> expiredBooks = new ArrayList<>();
+        for (Journal journalEntry:borrowedBooks) {
+            if (journalEntry.getDateEnd().compareTo(date) < 0) {
+                expiredBooks.add(journalEntry);
+            }
+        }
+        return expiredBooks;
+    }*/
 }

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page book for person</title>
+</head>
+<body>
+
+<p th:text="${infoAboutBook.getTitle() + ', ' + infoAboutBook.getWriter() + ', ' + infoAboutBook.getYearOfPublishing()}"></p>
+<br>
+
+<div th:if="${isBookReserved == true && isBookBorrowed == false}">
+    <p th:text="${'The user can receive the book before ' + dateEndReserve + ' inclusive'}"></p>
+</div>
+
+<div th:if="${isBookBorrowed == true && isBookReserved == false}">
+    <p th:text="${'The book return deadline is ' + dateEnd + ' inclusive'}"></p>
+</div>
+
+</body>
+</html>

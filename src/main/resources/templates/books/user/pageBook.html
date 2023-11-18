@@ -6,12 +6,29 @@
 </head>
 <body>
 <p th:text="${infoAboutBook.getTitle() + ', ' + infoAboutBook.getWriter() + ', ' + infoAboutBook.getYearOfPublishing()}"></p>
+
 <br>
 
-<!--
-добавить ограничение на количество взятых книг
--->
-<div th:if="${isBookReserved == true && isBookBorrowed == false}">
+<div th:if="${isBookReserved == false && isBookBorrowed == false}">
+
+    <div th:if="${infoAboutBook.getNumberOfCopies() == 0}">
+        <p th:text="${'No free copies'}" />
+    </div>
+
+    <div th:if="${infoAboutBook.getNumberOfCopies() > 0 && countOfBooksTakenByPerson < 5}">
+        <form th:method="PATCH" th:action="@{'/books/' + ${infoAboutBook.getBookId()} + '/' + ${infoAboutPerson.getPersonId()} + '/reserve'}">
+            <input type="submit" value="Reserve">
+        </form>
+        <p th:text="${'The reservation will be valid for three days'}" />
+    </div>
+
+    <div th:if="${countOfBooksTakenByPerson >= 5}">
+        <p th:text="${'You cannot take more than 5 books'}" />
+    </div>
+
+</div>
+
+<div th:if="${isBookReserved == true}">
     <p th:text="${'You have reserved this book'}" />
     <p th:text="${'You can receive the book until ' + dateEndReserve + ' inclusive'}" />
     <form th:method="DELETE" th:action="@{'/books/' + ${infoAboutBook.getBookId()} + '/' + ${infoAboutPerson.getPersonId()} + '/reserve'}">
@@ -19,29 +36,16 @@
     </form>
 </div>
 
-<div th:if="${isBookBorrowed == true && isBookReserved == false}">
+<div th:if="${isBookBorrowed == true && currentDate.compareTo(dateEnd) < 0}">
     <p th:text="${'You are reading this book'}" />
     <p th:text="${'The book return deadline is ' + dateEnd + ' inclusive'}" />
 </div>
 
-<div th:if="${isBookReserved == false && isBookBorrowed == false}">
-
-<div th:if="${infoAboutBook.getNumberOfCopies() == 0}">
-    <p th:text="${'No free copies'}" />
+<div th:if="${isBookBorrowed == true && currentDate.compareTo(dateEnd) > 0}">
+    <p th:text="${'You are overdue for this book'}" />
+    <p th:text="${'The deadline for returning the book was ' + dateEnd + ' inclusive'}" />
 </div>
 
-<div th:if="${infoAboutBook.getNumberOfCopies() > 0 && countOfBooksTakenByPerson < 5}">
-    <form th:method="PATCH" th:action="@{'/books/' + ${infoAboutBook.getBookId()} + '/' + ${infoAboutPerson.getPersonId()} + '/reserve'}">
-        <input type="submit" value="Reserve">
-    </form>
-    <p th:text="${'The reservation will be valid for three days'}" />
-</div>
-
-<div th:if="${countOfBooksTakenByPerson >= 5}">
-    <p th:text="${'You cannot take more than 5 books'}" />
-</div>
-
-</div>
 <br>
 <!--<div th:if="${infoAboutBook.personId == null}">
     <form th:method="PATCH" th:action="@{'/books/'+${infoAboutBook.getBookId()}+'/nonfree'}">

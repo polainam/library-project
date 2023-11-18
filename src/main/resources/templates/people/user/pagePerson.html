@@ -13,7 +13,7 @@
 
 </div>
 
-<div th:if="${!reservedBooks.isEmpty() && borrowedBooks.isEmpty()}">
+<div th:if="${!reservedBooks.isEmpty()}">
     <b th:text="${'Reserved books:'}"></b>
     <div th:each="book : ${reservedBooks}">
         <a th:href="@{'/books/user/' + ${book.getBookId()}}">
@@ -22,31 +22,26 @@
     </div>
 </div>
 
-<div th:if="${reservedBooks.isEmpty() && !borrowedBooks.isEmpty()}">
+<div th:if="${!borrowedBooks.isEmpty()}">
     <b th:text="${'Borrowed books:'}"></b>
     <div th:each="book : ${borrowedBooks}">
         <a th:href="@{'/books/user/' + ${book.getBookId()}}">
-            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
+            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"
+               th:style="${currentDate.compareTo(book.getDateEnd()) > 0 ? 'color: red;' : ''}"></p>
         </a>
     </div>
 </div>
 
-<div th:if="${!reservedBooks.isEmpty() && !borrowedBooks.isEmpty()}">
-    <b th:text="${'Reserved books:'}"></b>
-    <div th:each="book : ${reservedBooks}">
-        <a th:href="@{'/books/user/' + ${book.getBookId()}}">
-            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
-        </a>
-    </div>
-
-    <b th:text="${'Borrowed books:'}"></b>
-    <div th:each="book : ${borrowedBooks}">
-        <a th:href="@{'/books/user/' + ${book.getBookId()}}">
-            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
-        </a>
-    </div>
-</div>
 <br>
+
+<!--<div th:if="${!expiredBooks.isEmpty()}">
+    <b th:text="${'Expired books:'}"></b>
+    <div th:each="book : ${expiredBooks}">
+        <a th:href="@{'/books/user/' + ${book.getBookId()}}">
+            <p th:text="${book.getBook().getTitle() + ', ' + book.getBook().getWriter() + ', ' + book.getBook().getYearOfPublishing()}"></p>
+        </a>
+    </div>
+</div>-->
 
 <hr>
 
