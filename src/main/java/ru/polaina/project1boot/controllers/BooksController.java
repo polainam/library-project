@@ -164,14 +164,11 @@ public class BooksController {
         return "books/editBook";
     }
 
-/*    @PatchMapping("/{id}")
-    public String updateInfoAboutBook(@ModelAttribute("editBook") @Valid Book editBook, @PathVariable("id") int id) {
-        bookService.update(id, editBook);
-        return "redirect:/books";
-    }*/
-
     @GetMapping("/search")
     public String searchBooks(@RequestParam String query, Model model) {
+        if (query.isEmpty()) {
+            return "redirect:/books";
+        }
         List<Book> searchBooks = bookService.findByTitleIsStartingWith(query);
         model.addAttribute("books", searchBooks);
         return "books/listOfBooks";

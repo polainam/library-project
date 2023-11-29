@@ -44,6 +44,6 @@ public class AuthController {
             return "/auth/registration";
         }
         peopleService.save(person);
-        return "redirect:auth/login";
+        return "redirect:/auth/login";
     }
 }

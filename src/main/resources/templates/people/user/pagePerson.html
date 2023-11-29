@@ -6,7 +6,12 @@
 </head>
 <body>
 
-<p th:text="${infoAboutPerson.getFullName() + ', ' + infoAboutPerson.getYearOfBirth()}"></p>
+<p th:text="${'User name: ' + infoAboutPerson.getUserName()}"></p>
+<p th:text="${'Full name: ' + infoAboutPerson.getFullName()}"></p>
+<p th:text="${'Email: ' + infoAboutPerson.getEmail()}"></p>
+<p th:text="${'Phone number: ' + infoAboutPerson.getPhoneNumber()}"></p>
+
+<br>
 
 <div th:if="${reservedBooks.isEmpty() && borrowedBooks.isEmpty()}">
     <p th:text="${'You did not take a single book'}"></p>
@@ -57,9 +62,12 @@
 
 <br>
 
-<form th:method="DELETE" th:action="@{/people/{id}(id=${infoAboutPerson.getPersonId()})}">
-    <input type="submit" value="Delete">
+<form th:method="DELETE" th:action="@{'/people/' + ${infoAboutPerson.getPersonId()}}">
+    <input type="submit" value="Delete account" th:disabled="${!borrowedBooks.isEmpty() || !reservedBooks.isEmpty()}">
 </form>
+<th:block th:if="${!borrowedBooks.isEmpty() || !reservedBooks.isEmpty()}">
+    <p style="color: grey;">To delete your account, you must return all books </p>
+</th:block>
 
 </body>
 </html>

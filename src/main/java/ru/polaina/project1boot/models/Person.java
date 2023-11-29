@@ -1,6 +1,7 @@
 package ru.polaina.project1boot.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -16,24 +17,36 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int personId;
 
+    @NotEmpty(message = "User name should not be empty")
+    @Column(name = "user_name")
+    private String userName;
+
     @NotEmpty(message = "Full name should not be empty")
-    @Pattern(regexp = "[A-Za-z]+ [A-Za-z]+",
-            message = "Full name should be in this format: Surname Name")
+    @Pattern(regexp = "^[A-Z][a-z]+\\s[A-Z][a-z]+\\s[A-Z][a-z]+$",
+            message = "Full name should be in this format: Surname Name Patronymic")
     @Column(name = "full_name")
     private String fullName;
-
-    @Max(value = 2005, message = "Year of birth cannot be more than 2005")
-    @Column(name = "year_of_birth")
-    private int yearOfBirth;
 
     @OneToMany(mappedBy = "person")
     private List<Journal> journalEntries;
 
+    @NotEmpty(message = "Password should not be empty")
     @Column(name = "password")
     private String password;
 
     @Column(name = "role")
     private String role;
+
+    @Column(name = "email")
+    @NotEmpty(message = "Email should not be empty")
+    @Email
+    private String email;
+
+    @Column(name = "phone_number")
+    @NotEmpty(message = "Phone number should not be empty")
+    @Pattern(regexp = "^\\+7 \\(\\d{3}\\) \\d{3}-\\d{2}-\\d{2}$",
+            message = "Phone number should be in this format: +7 (XXX) XXX-XX-XX")
+    private String phoneNumber;
     public int getPersonId() {
         return personId;
     }
@@ -42,22 +55,13 @@ public class Person {
         this.personId = personId;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setUserName(String fullName) {
+        this.userName = fullName;
     }
-
-    public int getYearOfBirth() {
-        return yearOfBirth;
-    }
-
-    public void setYearOfBirth(int yearOfBirth) {
-        this.yearOfBirth = yearOfBirth;
-    }
-
 /*
     public List<Book> getBooks() {
         return books;
@@ -82,5 +86,37 @@ public class Person {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public List<Journal> getJournalEntries() {
+        return journalEntries;
+    }
+
+    public void setJournalEntries(List<Journal> journalEntries) {
+        this.journalEntries = journalEntries;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

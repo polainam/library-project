@@ -15,7 +15,10 @@
 <body>
 
 <!-- Отображение информации о человеке -->
-<p th:text="${infoAboutPerson.getFullName() + ', ' + infoAboutPerson.getYearOfBirth()}"></p>
+<p th:text="${'User name: ' + infoAboutPerson.getUserName()}"></p>
+<p th:text="${'Full name: ' + infoAboutPerson.getFullName()}"></p>
+<p th:text="${'Email: ' + infoAboutPerson.getEmail()}"></p>
+<p th:text="${'Phone number: ' + infoAboutPerson.getPhoneNumber()}"></p>
 
 <!-- Форма для назначения книги -->
     <form th:method="PATCH" th:action="@{'/people/'+${infoAboutPerson.getPersonId()}+'/assign'}">
@@ -26,12 +29,8 @@
             </select>
         </label>
 
-        <input th:if="${countOfBooksTakenByPerson >= 5}" type="submit" value="Assign" disabled="disabled">
+        <input th:if="${countOfBooksTakenByPerson >= 5 || !reservedBooks.isEmpty()}" type="submit" value="Assign" disabled="disabled">
         <span th:if="${countOfBooksTakenByPerson >= 5}" style="color: grey">The user cannot read more than 5 books</span>
-
-        <input th:if="${!reservedBooks.isEmpty()}" type="submit" value="Assign" disabled="disabled">
-        <span th:if="${!reservedBooks.isEmpty()}" style="color: grey">All reserved books must be assigned</span>
-
         <input th:if="${reservedBooks.isEmpty() && countOfBooksTakenByPerson < 5}" type="submit" value="Assign">
     </form>
 
@@ -45,6 +44,7 @@
 <div th:unless="${reservedBooks.isEmpty()}">
     <form th:method="PATCH" th:action="@{'/people/'+${infoAboutPerson.getPersonId()}+'/assignAllReserved'}">
         <input type="submit" value="Assign all reserved">
+        <span th:if="${!reservedBooks.isEmpty()}" style="color: grey">All reserved books must be assigned</span>
     </form>
 </div>
 <br>
@@ -82,8 +82,11 @@
 <br>
 
 <form th:method="DELETE" th:action="@{/people/{id}(id=${infoAboutPerson.getPersonId()})}">
-    <input type="submit" value="Block">
+    <input type="submit" value="Block account" th:disabled="${!borrowedBooks.isEmpty() || !reservedBooks.isEmpty()}">
 </form>
+<th:block th:if="${!borrowedBooks.isEmpty() || !reservedBooks.isEmpty()}">
+    <p style="color: grey;">To block an account all books must be returned</p>
+</th:block>
 
 </body>
 </html>

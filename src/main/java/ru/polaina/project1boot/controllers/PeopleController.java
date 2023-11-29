@@ -1,25 +1,27 @@
 package ru.polaina.project1boot.controllers;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.polaina.project1boot.models.Book;
 import ru.polaina.project1boot.models.Journal;
 import ru.polaina.project1boot.models.Person;
+import ru.polaina.project1boot.security.PersonDetails;
 import ru.polaina.project1boot.services.BooksService;
 import ru.polaina.project1boot.services.JournalService;
 import ru.polaina.project1boot.services.PeopleService;
+import ru.polaina.project1boot.util.PersonValidator;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/people")
@@ -28,14 +30,17 @@ public class PeopleController {
     private final JournalService journalService;
     private final BooksService booksService;
 
+    private final PersonValidator personValidator;
+
     private static final int NUMBER_OF_READING_DAYS = 31;
 
 
     @Autowired
-    public PeopleController(PeopleService peopleService, JournalService journalService, BooksService booksService) {
+    public PeopleController(PeopleService peopleService, JournalService journalService, BooksService booksService, PersonValidator personValidator) {
         this.peopleService = peopleService;
         this.journalService = journalService;
         this.booksService = booksService;
+        this.personValidator = personValidator;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -54,20 +59,6 @@ public class PeopleController {
 
         return "people/listOfPeople";
     }
-
-/*    @GetMapping("/new")
-    public String newPerson(@ModelAttribute("newPerson")Person person) {
-        return "people/newPerson";
-    }
-    @PostMapping()
-    public String insertNewPerson(@ModelAttribute("newPerson") @Valid Person person, BindingResult bindingResult) {
-        personValidator.validate(person, bindingResult);
-        if (bindingResult.hasErrors()) {
-            return "people/newPerson";
-        }
-        peopleService.save(person);
-        return "redirect:/people";
-    }*/
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/{id}")
@@ -91,7 +82,7 @@ public class PeopleController {
         model.addAttribute("books", books);
         Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(id);
         model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
-        model.addAttribute("bookId", 0); // или любое начальное значение по умолчанию
+        model.addAttribute("bookId", 0);
         Date currentDate = Calendar.getInstance().getTime();
         model.addAttribute("currentDate", currentDate);
 
@@ -113,6 +104,7 @@ public class PeopleController {
         return "people/user/pagePerson";
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{id}/edit")
     public String personEditPage(@PathVariable("id") int id, Model model) {
         model.addAttribute("editPerson", peopleService.findOne(id));
@@ -120,15 +112,32 @@ public class PeopleController {
     }
 
     @PatchMapping("/{id}")
-    public String updateInfoAboutPerson(@ModelAttribute("editPerson") @Valid Person editPerson, @PathVariable("id") int id) {
+    public String updateInfoAboutPerson(@ModelAttribute("editPerson") @Valid Person editPerson, BindingResult bindingResult, @PathVariable("id") int id, Model model) {
+        if (!peopleService.isNewUsernameTheSame(id, editPerson)) {
+            personValidator.validate(editPerson, bindingResult);
+        }
+        if (!peopleService.isNewEmailTheSame(id, editPerson)) {
+            personValidator.validateEmail(editPerson, bindingResult);
+        }
+        if (!peopleService.isNewPhoneNumberTheSame(id, editPerson)) {
+            personValidator.validatePhoneNumber(editPerson, bindingResult);
+        }
+        if(bindingResult.hasErrors()) {
+            editPerson.setPersonId(id);
+            model.addAttribute("editPerson", editPerson);
+            return "people/editPerson";
+        }
         peopleService.update(id, editPerson);
-        return "redirect:/people";
+        return "redirect:/people/user/" + id;
     }
 
-    //Будет ошибка, тк on delete по умолчанию (Но если у человека нет книг, то удалится)
     @DeleteMapping("/{id}")
-    public String deletePerson(@PathVariable("id") int id) {
+    public String deletePerson(@PathVariable("id") int id, Authentication authentication) {
         peopleService.delete(id);
+        Person person = ((PersonDetails) authentication.getPrincipal()).getPerson();
+        if (person.getRole().equals("ROLE_USER")) {
+            return "redirect:/auth/registration";
+        }
         return "redirect:/people";
     }
 
@@ -139,7 +148,7 @@ public class PeopleController {
         assignBook(journal, bookId, person);
         Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(personId);
         model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
-        model.addAttribute("bookId", 0); // или любое начальное значение по умолчанию
+        model.addAttribute("bookId", 0);
 
         return "redirect:/people/admin/" + personId;
     }
@@ -154,7 +163,7 @@ public class PeopleController {
         }
         Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(personId);
         model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
-        model.addAttribute("bookId", 0); // или любое начальное значение по умолчанию
+        model.addAttribute("bookId", 0);
 
         return "redirect:/people/admin/" + personId;
     }
@@ -203,5 +212,12 @@ public class PeopleController {
     public String returnBooks(@PathVariable("id") int id, @RequestParam("returnedBooksId") List<Integer> returnedBooksId) {
         journalService.returnBooks(returnedBooksId);
         return "redirect:/people/admin/" + id;
+    }
+
+    @GetMapping("/search")
+    public String searchPeople(@RequestParam String query, Model model) {
+        List<Person> searchPeople = peopleService.findByTitleIsStartingWith(query);
+        model.addAttribute("people", searchPeople);
+        return "people/listOfPeople";
     }
 }

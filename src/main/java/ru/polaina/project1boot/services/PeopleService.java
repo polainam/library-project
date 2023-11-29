@@ -47,7 +47,11 @@ public class PeopleService implements UserDetailsService {
     @Transactional
     public void update(int id, Person updatedPerson) {
         updatedPerson.setPersonId(id);
-        peopleRepository.save(updatedPerson);
+        save(updatedPerson);
+    }
+    public boolean isNewUsernameTheSame(int id, Person editPerson) {
+        Person oldPerson = findOne(id);
+        return oldPerson.getUserName().equals(editPerson.getUserName());
     }
 
     public Person findOne(int id) {
@@ -56,7 +60,7 @@ public class PeopleService implements UserDetailsService {
     }
 
     public Optional<Person> findByName(String name) {
-        return peopleRepository.findByFullName(name);
+        return peopleRepository.findByUserName(name);
     }
 
     @Transactional
@@ -66,7 +70,7 @@ public class PeopleService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        Optional<Person> person = peopleRepository.findByFullName(s);
+        Optional<Person> person = peopleRepository.findByUserName(s);
         if (person.isEmpty()) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -86,5 +90,27 @@ public class PeopleService implements UserDetailsService {
         Pageable pageable = PageRequest.of(page, peoplePerPage);
 
         return peopleRepository.findByRole(roleName, pageable);
+    }
+
+    public List<Person> findByTitleIsStartingWith(String query) {
+        return peopleRepository.findByUserNameIsStartingWith(query);
+    }
+
+    public boolean isNewEmailTheSame(int id, Person editPerson) {
+        Person oldPerson = findOne(id);
+        return oldPerson.getEmail().equals(editPerson.getEmail());
+    }
+
+    public boolean isNewPhoneNumberTheSame(int id, Person editPerson) {
+        Person oldPerson = findOne(id);
+        return oldPerson.getPhoneNumber().equals(editPerson.getPhoneNumber());
+    }
+
+    public Optional<Person> findByEmail(String email) {
+        return peopleRepository.findByEmail(email);
+    }
+
+    public Optional<Person> findByPhoneNumber(String phoneNumber) {
+        return peopleRepository.findByPhoneNumber(phoneNumber);
     }
 }

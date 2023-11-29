@@ -54,14 +54,14 @@
         <select name="personId">
             <option th:each="person : ${people}"
                     th:value="${person.getPersonId()}"
-                    th:text="${person.getFullName()}"></option>
+                    th:text="${person.getUserName()}"></option>
         </select>
         <input type="submit" value="Assign book">
     </form>
 </div>-->
 
 <!--<div th:if="${infoAboutBook.personId != null}">
-    <p th:text="${'The book is now at: ' + infoAboutPerson.getFullName()}"></p>
+    <p th:text="${'The book is now at: ' + infoAboutPerson.getUserName()}"></p>
     <br>
     <form th:method="PATCH" th:action="@{'/books/'+${infoAboutBook.getBookId()}+'/free'}">
         <input type="submit" value="Free book">

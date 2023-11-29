@@ -40,7 +40,7 @@ xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     </div>
 </div>
 <br>
-<div th:if="${totalPages > 1}">
+<div th:if="${totalPages > 0}">
     <div th:if="${currentPage > 0}">
         <a th:href="@{'/books?page=' + ${currentPage - 1} + '&books_per_page=' + ${booksPerPage}}" th:text="${'Previous'}"></a>
     </div>

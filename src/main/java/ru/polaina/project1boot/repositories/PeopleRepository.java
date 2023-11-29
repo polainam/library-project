@@ -13,8 +13,10 @@ import java.util.Optional;
 
 @Repository
 public interface PeopleRepository extends JpaRepository<Person, Integer> {
-    Optional<Person> findByFullName(String name);
+    Optional<Person> findByUserName(String name);
     List<Person> findAllByRole(String role);
     Page<Person> findByRole(@Param("roleName") String roleName, Pageable pageable);
-
+    List<Person> findByUserNameIsStartingWith(String query);
+    Optional<Person> findByEmail(String email);
+    Optional<Person> findByPhoneNumber(String phoneNumber);
 }
