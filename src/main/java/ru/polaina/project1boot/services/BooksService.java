@@ -61,8 +61,8 @@ public class BooksService {
         booksRepository.save(updatedBook);
     }
 
-    public Optional<Book> findByTitle(String title) {
-        return booksRepository.findByTitle(title);
+    public Optional<Book> findByTitleAndWriterAndYearOfPublishing(Book book) {
+        return booksRepository.findByTitleAndWriterAndYearOfPublishing(book.getTitle(), book.getWriter(), book.getYearOfPublishing());
     }
 
     public List<Book> findByWriter(String writer) {
@@ -74,24 +74,6 @@ public class BooksService {
         booksRepository.deleteById(id);
     }
 
-/*    @Transactional
-    public void update(int bookId) {
-        Book updatedBook = findOne(bookId);
-        updatedBook.setPersonId(null);
-        booksRepository.save(updatedBook);
-    }*/
-
-/*    @Transactional
-    public void update(Person personId, int bookId) { //personId был int
-        Book updatedBook = findOne(bookId);
-        updatedBook.setPersonId(personId);
-
-        updatedBook.setDateOfReceiving(new Date()); //человек в это время взял книгу
-
-        booksRepository.save(updatedBook);
-    }*/
-
-
 
     public List<Book> findByTitleIsStartingWith(String query) {
         return booksRepository.findByTitleIsStartingWith(query);
@@ -99,5 +81,12 @@ public class BooksService {
 
     public int countAll() {
         return findAll().size();
+    }
+
+    public boolean isNewBookTheSame(int bookId, Book editBook) {
+        Book oldBook = findOne(bookId);
+        return oldBook.getTitle().equals(editBook.getTitle()) &&
+                oldBook.getWriter().equals(editBook.getWriter()) &&
+                oldBook.getYearOfPublishing().equals(editBook.getYearOfPublishing());
     }
 }

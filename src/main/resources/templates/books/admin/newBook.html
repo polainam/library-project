@@ -9,16 +9,21 @@
 <form th:method="POST" th:action="@{/books}" th:object="${newBook}">
   <label for="title">Enter book title: </label>
   <input type="text" th:field="*{title}" id="title"/>
-  <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+  <div style="color:gray" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
   <br/>
   <label for="writer">Enter writer: </label>
   <input type="text" th:field="*{writer}" id="writer"/>
-   <div style="color:red" th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}"></div>
+   <div style="color:gray" th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}"></div>
   <br/>
     <label for="yearOfPublishing">Enter year of publishing: </label>
     <input type="text" th:field="*{yearOfPublishing}" id="yearOfPublishing"/>
-     <div style="color:red" th:if="${#fields.hasErrors('yearOfPublishing')}" th:errors="*{yearOfPublishing}"></div>
+     <div style="color:gray" th:if="${#fields.hasErrors('yearOfPublishing')}" th:errors="*{yearOfPublishing}"></div>
     <br/>
+    <label for="numberOfCopies">Enter number of copies: </label>
+    <input type="text" th:field="*{numberOfCopies}" id="numberOfCopies" />
+    <div style="color:gray" th:if="${#fields.hasErrors('numberOfCopies')}" th:errors="*{numberOfCopies}"></div>
+    <br/>
+
   <input type="submit" value="Create"/>
 </form>
 

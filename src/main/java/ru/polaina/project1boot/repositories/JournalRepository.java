@@ -24,10 +24,12 @@ public interface JournalRepository extends JpaRepository<Journal, Integer> {
     List<Journal> findByPersonIdAndDateReserveNotNull(int personId);
 
     List<Journal> findByPersonIdAndDateBeginNotNull(int personId);
+    List<Journal> findAllByPersonIdAndDateEndBefore(int personId, Date currentDate);
+
     List<Journal> findAllByPersonId(int personId);
 
     Integer countAllByPersonId(int personId);
-
     void deleteByBookId(int id);
+    void deleteByPersonId(int id);
 
 }

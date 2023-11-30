@@ -18,10 +18,6 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookId;
 
-/*    @ManyToOne
-    @JoinColumn(name = "person_id", referencedColumnName = "id")
-    private Person personId;*/
-
     @OneToMany(mappedBy = "book")
     private List<Journal> journalEntries;
 
@@ -33,19 +29,12 @@ public class Book {
     @Column(name = "writer")
     private String writer;
 
+    @NotEmpty(message = "Year of publishing should not be empty")
     @Column(name = "year_of_publishing")
-    private int yearOfPublishing;
+    private String yearOfPublishing;
 
     @Column(name = "number_of_copies")
-    private int numberOfCopies;
-
-/*    @Column(name = "date_of_receiving")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date dateOfReceiving;*/
-
-/*    @Transient
-    private boolean isReturnTimeOverdue;*/
+    private Integer numberOfCopies;
 
     public int getBookId() {
         return bookId;
@@ -54,14 +43,6 @@ public class Book {
     public void setBookId(int bookId) {
         this.bookId = bookId;
     }
-
-/*    public Person getPersonId() {
-        return personId;
-    }
-
-    public void setPersonId(Person personId) {
-        this.personId = personId;
-    }*/
 
     public String getTitle() {
         return title;
@@ -78,11 +59,11 @@ public class Book {
         this.writer = writer;
     }
 
-    public int getYearOfPublishing() {
+    public String getYearOfPublishing() {
         return yearOfPublishing;
     }
 
-    public void setYearOfPublishing(int yearOfPublishing) {
+    public void setYearOfPublishing(String yearOfPublishing) {
         this.yearOfPublishing = yearOfPublishing;
     }
 
@@ -94,31 +75,11 @@ public class Book {
         this.journalEntries = journalEntries;
     }
 
-    /*    public Date getDateOfReceiving() {
-        return dateOfReceiving;
-    }
-
-    public void setDateOfReceiving(Date dateOfReceiving) {
-        this.dateOfReceiving = dateOfReceiving;
-    }
-
-    public boolean isReturnTimeOverdue() {
-        Date currentTime = new Timestamp(System.currentTimeMillis());
-        long differenceInMillis = currentTime.getTime() - dateOfReceiving.getTime();
-        long differenceInDays = TimeUnit.MILLISECONDS.toDays(differenceInMillis);
-
-        return differenceInDays > 10;
-    }*/
-
-/*    public void setReturnTimeOverdue(boolean returnTimeOverdue) {
-        isReturnTimeOverdue = returnTimeOverdue;
-    }*/
-
-    public int getNumberOfCopies() {
+    public Integer getNumberOfCopies() {
         return numberOfCopies;
     }
 
-    public void setNumberOfCopies(int numberOfCopies) {
+    public void setNumberOfCopies(Integer numberOfCopies) {
         this.numberOfCopies = numberOfCopies;
     }
 

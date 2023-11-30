@@ -40,6 +40,8 @@ public class AuthController {
     public String performRegistration(@ModelAttribute("newPerson") @Valid Person person,
                                       BindingResult bindingResult) {
         personValidator.validate(person, bindingResult);
+        personValidator.validateEmail(person, bindingResult);
+        personValidator.validatePhoneNumber(person, bindingResult);
         if(bindingResult.hasErrors()) {
             return "/auth/registration";
         }

@@ -18,7 +18,6 @@ import ru.polaina.project1boot.services.PeopleService;
 import ru.polaina.project1boot.util.BookValidator;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -64,17 +63,20 @@ public class BooksController {
         return "books/listOfBooks";
     }
 
-
     @GetMapping("/new")
     public String newBook(@ModelAttribute("newBook") Book book) {
-        return "books/newBook";
+        return "books/admin/newBook";
     }
 
     @PostMapping()
     public String insertNewBook(@ModelAttribute("newBook") @Valid Book book, BindingResult bindingResult) {
+        if (book.getNumberOfCopies() == null) {
+            book.setNumberOfCopies(0);
+        }
+        bookValidator.validateNumberOfCopies(book, bindingResult);
         bookValidator.validate(book, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "books/newBook";
+            return "books/admin/newBook";
         }
         bookService.save(book);
         return "redirect:/books";
@@ -158,10 +160,30 @@ public class BooksController {
         return "redirect:/books/user/" + bookId;
     }
 
-    @GetMapping("/{id}/edit")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/admin/{id}/edit")
     public String bookEditPage(@PathVariable("id") int id, Model model) {
         model.addAttribute("editBook", bookService.findOne(id));
-        return "books/editBook";
+        return "books/admin/editBook";
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("/{id}")
+    public String updateBook(@ModelAttribute("editBook") @Valid Book editBook, BindingResult bindingResult, @PathVariable("id") int bookId, Model model) {
+        if (editBook.getNumberOfCopies() == null) {
+            editBook.setNumberOfCopies(0);
+        }
+        bookValidator.validateNumberOfCopies(editBook, bindingResult);
+        if (!bookService.isNewBookTheSame(bookId, editBook)) {
+            bookValidator.validate(editBook, bindingResult);
+        }
+        if (bindingResult.hasErrors()) {
+            editBook.setBookId(bookId);
+            model.addAttribute("editBook", editBook);
+            return "books/admin/editBook";
+        }
+        bookService.update(bookId, editBook);
+        return "redirect:/books/admin/" + bookId;
     }
 
     @GetMapping("/search")
@@ -174,7 +196,8 @@ public class BooksController {
         return "books/listOfBooks";
     }
 
-    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/admin/{id}")
     public String deleteBook(@PathVariable("id") int id) {
         bookService.delete(id);
         return "redirect:/books";

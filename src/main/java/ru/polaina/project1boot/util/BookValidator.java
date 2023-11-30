@@ -2,6 +2,7 @@ package ru.polaina.project1boot.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.polaina.project1boot.models.Book;
@@ -25,8 +26,16 @@ public class BookValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         Book book = (Book) target;
-        if (booksService.findByTitle(book.getTitle()).isPresent()) {
-            errors.rejectValue("title", "", "This title is already taken");
+        if (booksService.findByTitleAndWriterAndYearOfPublishing(book).isPresent()) {
+            errors.rejectValue("numberOfCopies", "", "This book already exists");
+        }
+    }
+
+
+    public void validateNumberOfCopies(Object target, Errors errors) {
+        Book book = (Book) target;
+        if (book.getNumberOfCopies() < 0) {
+            errors.rejectValue("numberOfCopies", "", "The number of copies cannot be less than 0");
         }
     }
 }

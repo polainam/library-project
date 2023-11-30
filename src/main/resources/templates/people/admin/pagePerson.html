@@ -29,9 +29,11 @@
             </select>
         </label>
 
-        <input th:if="${countOfBooksTakenByPerson >= 5 || !reservedBooks.isEmpty()}" type="submit" value="Assign" disabled="disabled">
+        <input th:if="${countOfBooksTakenByPerson >= 5 || !reservedBooks.isEmpty() || !overdueBook.isEmpty()}" type="submit" value="Assign" disabled="disabled">
+        <input th:if="${reservedBooks.isEmpty() && countOfBooksTakenByPerson < 5 && overdueBook.isEmpty()}" type="submit" value="Assign">
         <span th:if="${countOfBooksTakenByPerson >= 5}" style="color: grey">The user cannot read more than 5 books</span>
-        <input th:if="${reservedBooks.isEmpty() && countOfBooksTakenByPerson < 5}" type="submit" value="Assign">
+        <br>
+        <span th:if="${!overdueBook.isEmpty()}" style="color: grey">Books cannot be issued to a user with expired books</span>
     </form>
 
 <br>
@@ -82,9 +84,9 @@
 <br>
 
 <form th:method="DELETE" th:action="@{/people/{id}(id=${infoAboutPerson.getPersonId()})}">
-    <input type="submit" value="Block account" th:disabled="${!borrowedBooks.isEmpty() || !reservedBooks.isEmpty()}">
+    <input type="submit" value="Block account" th:disabled="${!overdueBook.equals(borrowedBooks) || !reservedBooks.isEmpty()}">
 </form>
-<th:block th:if="${!borrowedBooks.isEmpty() || !reservedBooks.isEmpty()}">
+<th:block th:if="${!overdueBook.equals(borrowedBooks) || !reservedBooks.isEmpty()}">
     <p style="color: grey;">To block an account all books must be returned</p>
 </th:block>
 

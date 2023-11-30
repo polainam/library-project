@@ -41,12 +41,15 @@
     </form>
 </div>-->
 
-<!--<form th:method="GET" th:action="@{/books/{id}/edit(id=${infoAboutBook.getBookId()})}">-->
-<!--    <input type="submit" value="Edit">-->
-<!--</form>-->
-<!--<br>-->
-<!--<form th:method="DELETE" th:action="@{/books/{id}(id=${infoAboutBook.getBookId()})}">-->
-<!--    <input type="submit" value="Delete">-->
-<!--</form>-->
+<form th:method="GET" th:action="@{/books/admin/{id}/edit(id=${infoAboutBook.getBookId()})}">
+    <input type="submit" value="Edit">
+</form>
+<br>
+<form th:method="DELETE" th:action="@{/books/admin/{id}(id=${infoAboutBook.getBookId()})}">
+    <input type="submit" value="Delete book" th:disabled="${countBooks != 0}">
+</form>
+<th:block th:if="${countBooks != 0}">
+    <p style="color: grey;">Cannot delete a book with a non-zero number of copies</p>
+</th:block>
 </body>
 </html>

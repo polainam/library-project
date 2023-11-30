@@ -85,6 +85,8 @@ public class PeopleController {
         model.addAttribute("bookId", 0);
         Date currentDate = Calendar.getInstance().getTime();
         model.addAttribute("currentDate", currentDate);
+        List<Journal> overdueBook = journalService.findAllByPersonIdAndDateEndBefore(id, currentDate);
+        model.addAttribute("overdueBook", overdueBook);
 
         return "people/admin/pagePerson";
     }
@@ -133,19 +135,21 @@ public class PeopleController {
 
     @DeleteMapping("/{id}")
     public String deletePerson(@PathVariable("id") int id, Authentication authentication) {
-        peopleService.delete(id);
         Person person = ((PersonDetails) authentication.getPrincipal()).getPerson();
         if (person.getRole().equals("ROLE_USER")) {
+            peopleService.delete(id);
             return "redirect:/auth/registration";
         }
+        journalService.deleteByPersonId(id);
+        peopleService.delete(id);
         return "redirect:/people";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}/assign")
-    public String assignBook(@PathVariable("id") int personId, @RequestParam int bookId, Journal journal, Model model) {
+    public String assignBook(@PathVariable("id") int personId, @RequestParam int bookId, Model model) {
         Person person = peopleService.findOne(personId);
-        assignBook(journal, bookId, person);
+        assignBook(new Journal(), bookId, person);
         Integer countOfBooksTakenByPerson = journalService.countAllByPersonId(personId);
         model.addAttribute("countOfBooksTakenByPerson", countOfBooksTakenByPerson);
         model.addAttribute("bookId", 0);

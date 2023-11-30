@@ -104,6 +104,14 @@ public class JournalService {
         }
     }
 
+    public void deleteByPersonId(int id) {
+        journalRepository.deleteByPersonId(id);
+    }
+
+    public List<Journal> findAllByPersonIdAndDateEndBefore(int personId, Date currentDate) {
+        return journalRepository.findAllByPersonIdAndDateEndBefore(personId, currentDate);
+    }
+
 /*    public List<Journal> getExpiredBooks(Date date, List<Journal> borrowedBooks) {
         List<Journal> expiredBooks = new ArrayList<>();
         for (Journal journalEntry:borrowedBooks) {
