@@ -1,61 +1,175 @@
 <!DOCTYPE html>
 <html lang="en"
-xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
-    <title>List of books</title>
+    <title>Book Library</title>
     <style>
-        .button-spacing {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        main {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 600px; /*  ширина контейнера */
+            height: 600px; /* высота */
+        }
+
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            margin-right: 10px;
+            width: 300px;
+        }
+
+        button, input[type="submit"] {
+            padding: 6px 10px;
+            background-color: #9a64c7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover, input[type="submit"]:hover {
+            background-color: #9352ab;
+        }
+
+        .admin-actions {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .admin-actions a {
+            text-decoration: none;
+            color: #fff;
+            background-color: #9a64c7;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .admin-actions a:hover {
+            background-color: #9352ab;
+        }
+
+        .admin-actions .button-spacing:nth-child(1) {
             margin-right: 30px;
+        }
+
+        .book-link, .person-link {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .book-link:hover, .person-link:hover {
+            background-color: #eaeaea;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 2px 5px;
+            text-decoration: none;
+            background-color: #9a64c7;
+            color: #fff;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #9352ab;
+        }
+
+        .profile-form {
+            margin-top: -1px;
+            margin-right: 610px;
         }
     </style>
 </head>
 <body>
-<form th:method="GET" th:action="@{/books/search}">
-    <label>
-        <input type="text" name="query" placeholder="Enter text to search: ">
-    </label>
-    <button type="submit" class="button-spacing">Search</button>
-    <div sec:authorize="hasRole('ADMIN')">
-        <br>
-        <a href="/people" class="button-spacing">People</a>
-        <a href="/books/new" class="button-spacing">Create book</a>
-</div>
-</form>
-<br>
-<div th:if="${books.isEmpty()}">
-    <p th:text="${'No books found'}"></p>
-</div>
-<div th:unless="${books.isEmpty()}">
+<main>
+    <div sec:authorize="hasRole('USER')" class="profile-form">
+        <form th:method="GET" th:action="@{/people/user/{id}(id=${personId})}">
+            <input type="submit" value="View Profile">
+        </form>
+    </div>
+
+    <div sec:authorize="hasRole('ADMIN')" class="admin-actions">
+        <form th:method="GET" class="button-spacing" th:action="@{/people}">
+            <input type="submit" value="People">
+        </form>
+
+        <form th:method="GET" class="button-spacing" th:action="@{/books/new}">
+            <input type="submit" value="Create book">
+        </form>
+    </div>
+    <form th:method="GET" th:action="@{/books/search}" class="search-form" onsubmit="return validateSearch()">
+        <label>
+            <input type="text" name="query" class="search-input" placeholder="Enter text to search">
+        </label>
+        <button type="submit" class="search-button">Search</button>
+    </form>
+
     <div th:each="book : ${books}">
-        <br>
-        <div sec:authorize="hasRole('USER')">
-        <a th:href="@{/books/user/{id}(id=${book.getBookId()}) }"
-           th:text="${book.getTitle() + ', ' + book.getWriter + ', ' + book.getYearOfPublishing()}"></a>
-        </div>
-        <div sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/books/admin/{id}(id=${book.getBookId()}) }"
-               th:text="${book.getTitle() + ', ' + book.getWriter + ', ' + book.getYearOfPublishing()}"></a>
-        </div>
-    </div>
-</div>
-<br>
-<div th:if="${totalPages > 0}">
-    <div th:if="${currentPage > 0}">
-        <a th:href="@{'/books?page=' + ${currentPage - 1} + '&books_per_page=' + ${booksPerPage}}" th:text="${'Previous'}"></a>
+        <a class="book-link" th:href="@{/books/admin/{id}(id=${book.getBookId()})}">
+            <span th:text="${book.getTitle()}"></span>
+        </a>
     </div>
 
-    <div th:if="${currentPage < totalPages}">
-        <a th:href="@{'/books?page=' + ${currentPage + 1} + '&books_per_page=' + ${booksPerPage}}" th:text="${'Next'}"></a>
-    </div>
-</div>
-<br>
+    <div class="pagination" th:if="${totalPages > 0}">
+        <div th:if="${currentPage > 0}">
+            <a th:href="@{'/books?page=' + ${currentPage - 1} + '&booksPerPage=' + ${booksPerPage}}" class="pagination-link" th:text="${'Previous'}"></a>
+        </div>
 
-<div sec:authorize="hasRole('USER')">
-<form th:method="GET" th:action="@{/people/user/{id}(id=${personId})}">
-    <input type="submit" value="Profile">
-</form>
-</div>
+        <div th:if="${currentPage < totalPages}">
+            <a th:href="@{'/books?page=' + ${currentPage + 1} + '&booksPerPage=' + ${booksPerPage}}" class="pagination-link" th:text="${'Next'}"></a>
+        </div>
+    </div>
+</main>
+
+<script>
+    function validateSearch() {
+        var query = document.querySelector('input[name="query"]').value.trim();
+        if (query === "") {
+            alert("Please enter text before searching");
+            return false;
+        }
+        return true;
+    }
+</script>
 
 </body>
 </html>

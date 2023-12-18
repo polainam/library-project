@@ -43,7 +43,7 @@ public class BooksController {
     @GetMapping()
     public String listOfBooks(Model model,
                               @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-                              @RequestParam(value = "books_per_page", required = false, defaultValue = "10") Integer booksPerPage,
+                              @RequestParam(value = "books_per_page", required = false, defaultValue = "8") Integer booksPerPage,
                               @RequestParam(value = "sort_by_year", required = false) String sortByYear,
                               Authentication authentication) {
         int totalBooks = bookService.countAll();
