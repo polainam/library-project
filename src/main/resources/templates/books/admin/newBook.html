@@ -1,31 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>New book</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        main {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px; /* Уменьшенная ширина контейнера */
+        }
+
+        form {
+            margin: 10px 0 -5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: normal;
+            text-align: left;
+            width: 100%;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            margin-bottom: 15px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            padding: 10px;
+            background-color: #9a64c7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #9352ab;
+        }
+
+        div[style] {
+            color: grey;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
+<main>
+    <form th:method="POST" th:action="@{/books}" th:object="${newBook}">
+        <label for="title">Book Title</label>
+        <input type="text" th:field="*{title}" id="title"/>
+        <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
 
-<form th:method="POST" th:action="@{/books}" th:object="${newBook}">
-  <label for="title">Enter book title: </label>
-  <input type="text" th:field="*{title}" id="title"/>
-  <div style="color:gray" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
-  <br/>
-  <label for="writer">Enter writer: </label>
-  <input type="text" th:field="*{writer}" id="writer"/>
-   <div style="color:gray" th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}"></div>
-  <br/>
-    <label for="yearOfPublishing">Enter year of publishing: </label>
-    <input type="text" th:field="*{yearOfPublishing}" id="yearOfPublishing"/>
-     <div style="color:gray" th:if="${#fields.hasErrors('yearOfPublishing')}" th:errors="*{yearOfPublishing}"></div>
-    <br/>
-    <label for="numberOfCopies">Enter number of copies: </label>
-    <input type="text" th:field="*{numberOfCopies}" id="numberOfCopies" />
-    <div style="color:gray" th:if="${#fields.hasErrors('numberOfCopies')}" th:errors="*{numberOfCopies}"></div>
-    <br/>
+        <label for="writer">Writer</label>
+        <input type="text" th:field="*{writer}" id="writer"/>
+        <div th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}"></div>
 
-  <input type="submit" value="Create"/>
-</form>
+        <label for="yearOfPublishing">Year of Publishing</label>
+        <input type="text" th:field="*{yearOfPublishing}" id="yearOfPublishing"/>
+        <div th:if="${#fields.hasErrors('yearOfPublishing')}" th:errors="*{yearOfPublishing}"></div>
 
+        <label for="numberOfCopies">Number of Copies</label>
+        <input type="text" th:field="*{numberOfCopies}" id="numberOfCopies" />
+        <div th:if="${#fields.hasErrors('numberOfCopies')}" th:errors="*{numberOfCopies}"></div>
+
+        <input type="submit" value="Create"/>
+    </form>
+</main>
 </body>
 </html>

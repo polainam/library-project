@@ -44,7 +44,7 @@
             background-color: #9a64c7;
             color: #fff;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
         }
 
@@ -115,7 +115,7 @@
 
         .profile-form {
             margin-top: -1px;
-            margin-right: 610px;
+            margin-right: 510px;
         }
     </style>
 </head>
@@ -143,12 +143,23 @@
         <button type="submit" class="search-button">Search</button>
     </form>
 
-    <div th:each="book : ${books}">
-        <a class="book-link" th:href="@{/books/admin/{id}(id=${book.getBookId()})}">
-            <span th:text="${book.getTitle()}"></span>
-        </a>
+    <div th:if="${books.isEmpty()}">
+        <p th:text="${'No books found'}"></p>
     </div>
-
+    <div th:unless="${books.isEmpty()}">
+        <div th:each="book : ${books}">
+            <div sec:authorize="hasRole('USER')">
+                <a class="book-link" th:href="@{/books/user/{id}(id=${book.getBookId()}) }">
+                <span th:text="${book.getTitle() + ', ' + book.getWriter + ', ' + book.getYearOfPublishing()}"></span>
+                </a>
+            </div>
+            <div sec:authorize="hasRole('ADMIN')">
+                <a class="book-link" th:href="@{/books/admin/{id}(id=${book.getBookId()}) }">
+                <span th:text="${book.getTitle() + ', ' + book.getWriter + ', ' + book.getYearOfPublishing()}"></span>
+                </a>
+            </div>
+        </div>
+    </div>
     <div class="pagination" th:if="${totalPages > 0}">
         <div th:if="${currentPage > 0}">
             <a th:href="@{'/books?page=' + ${currentPage - 1} + '&booksPerPage=' + ${booksPerPage}}" class="pagination-link" th:text="${'Previous'}"></a>

@@ -3,53 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <title>Page Book</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        main {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 700px; /* Уменьшенная ширина контейнера */
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        form {
+            margin: 10px 0;
+        }
+
+        input[type="submit"] {
+            padding: 6px 10px;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #9352ab;
+        }
+
+        input[type="submit"]:not([disabled]) {
+            background-color: #9a64c7;
+        }
+
+        input[type="submit"][disabled] {
+            background-color: grey;
+            cursor: not-allowed;
+        }
+
+        p[style] {
+            color: grey;
+        }
+    </style>
 </head>
 <body>
-<p th:text="${infoAboutBook.getTitle() + ', ' + infoAboutBook.getWriter() + ', ' + infoAboutBook.getYearOfPublishing()}"></p>
-<br>
+<main>
+    <p th:text="${infoAboutBook.getTitle() + ', ' + infoAboutBook.getWriter() + ', ' + infoAboutBook.getYearOfPublishing()}"></p>
 
-<div th:if="${countBooks == 0}">
-    <p th:text="${'No free copies'}" />
-</div>
-
-<div th:if="${isOne}">
-    <p th:text="${countBooks + ' copy left'}" />
-</div>
-
-<div th:if="${countBooks > 1}">
-    <p th:text="${countBooks + ' copies left'}" />
-</div>
-<br>
-<!--<div th:if="${infoAboutBook.personId == null}">
-    <form th:method="PATCH" th:action="@{'/books/'+${infoAboutBook.getBookId()}+'/nonfree'}">
-        <p th:text="${'This book is free. To whom should it be assigned?'}"></p>
-        <p th:text="${'Choose a person'}"></p>
-        <select name="personId">
-            <option th:each="person : ${people}"
-                    th:value="${person.getPersonId()}"
-                    th:text="${person.getUserName()}"></option>
-        </select>
-        <input type="submit" value="Assign book">
-    </form>
-</div>-->
-
-<!--<div th:if="${infoAboutBook.personId != null}">
-    <p th:text="${'The book is now at: ' + infoAboutPerson.getUserName()}"></p>
     <br>
-    <form th:method="PATCH" th:action="@{'/books/'+${infoAboutBook.getBookId()}+'/free'}">
-        <input type="submit" value="Free book">
-    </form>
-</div>-->
 
-<form th:method="GET" th:action="@{/books/admin/{id}/edit(id=${infoAboutBook.getBookId()})}">
-    <input type="submit" value="Edit">
-</form>
-<br>
-<form th:method="DELETE" th:action="@{/books/admin/{id}(id=${infoAboutBook.getBookId()})}">
-    <input type="submit" value="Delete book" th:disabled="${countBooks != 0}">
-</form>
-<th:block th:if="${countBooks != 0}">
-    <p style="color: grey;">Cannot delete a book with a non-zero number of copies</p>
-</th:block>
+    <div th:if="${countBooks == 0}">
+        <p th:text="${'No free copies'}" />
+    </div>
+
+    <div th:if="${isOne}">
+        <p th:text="${countBooks + ' copy left'}" />
+    </div>
+
+    <div th:if="${countBooks > 1}">
+        <p th:text="${countBooks + ' copies left'}" />
+    </div>
+
+    <br>
+
+    <form th:method="GET" th:action="@{/books/admin/{id}/edit(id=${infoAboutBook.getBookId()})}">
+        <input type="submit" value="Edit">
+    </form>
+
+    <form th:method="DELETE" th:action="@{/books/admin/{id}(id=${infoAboutBook.getBookId()})}">
+        <input type="submit" value="Delete book" th:disabled="${countBooks != 0}">
+    </form>
+
+    <th:block th:if="${countBooks != 0}">
+        <p style="color: grey;">Cannot delete a book with a non-zero number of copies</p>
+    </th:block>
+</main>
 </body>
 </html>
