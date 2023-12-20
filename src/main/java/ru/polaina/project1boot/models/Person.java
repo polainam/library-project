@@ -23,7 +23,7 @@ public class Person {
 
     @NotEmpty(message = "Full name should not be empty")
     @Pattern(regexp = "^[A-Z][a-z]+\\s[A-Z][a-z]+\\s[A-Z][a-z]+$",
-            message = "Full name should be in this format: Surname Name Patronymic")
+            message = "Full name format: Surname Name Patronymic")
     @Column(name = "full_name")
     private String fullName;
 
@@ -45,7 +45,7 @@ public class Person {
     @Column(name = "phone_number")
     @NotEmpty(message = "Phone number should not be empty")
     @Pattern(regexp = "^\\+7 \\(\\d{3}\\) \\d{3}-\\d{2}-\\d{2}$",
-            message = "Phone number should be in this format: +7 (XXX) XXX-XX-XX")
+            message = "Phone number format: +7 (XXX) XXX-XX-XX")
     private String phoneNumber;
     public int getPersonId() {
         return personId;
@@ -62,15 +62,6 @@ public class Person {
     public void setUserName(String fullName) {
         this.userName = fullName;
     }
-/*
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
-*/
 
     public String getPassword() {
         return password;
