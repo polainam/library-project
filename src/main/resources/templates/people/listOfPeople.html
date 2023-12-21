@@ -74,7 +74,7 @@
             padding: 8px 12px;
             margin: 0 5px;
             text-decoration: none;
-            background-color: #9a64c7;
+            background-color: #9352ab;
             color: #fff;
             border-radius: 4px;
             transition: background-color 0.3s ease;
@@ -83,11 +83,28 @@
         .pagination a:hover {
             background-color: #9352ab;
         }
+
+        .back {
+            padding: 8px 12px;
+            background-color: #9a64c7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+        }
+
+        .back:hover {
+            background-color: #9352ab;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-
+    <form th:method="GET" th:action="@{/books}">
+        <input type="submit" class="back" value="back">
+    </form>
+    <br>
     <form th:method="GET" th:action="@{/people/search}" class="search-form" onsubmit="return validateSearch()">
         <label>
             <input type="text" name="query" class="search-input" placeholder="Enter text to search">

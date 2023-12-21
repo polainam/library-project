@@ -67,6 +67,17 @@
 </head>
 <body>
 <main>
+<!--    не подходит-->
+    <button style="background-color: #9a64c7; color: white; padding: 6px; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease; width: 8%; align-self: flex-start;"
+            onmouseover="this.style.backgroundColor='#9352ab'"
+            onmouseout="this.style.backgroundColor='#9a64c7'"
+            type="button" onclick="goBack()">Back</button>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    <br>
     <p data-label="User name: " th:text="' ' + ${infoAboutPerson.getUserName()}"></p>
     <p data-label="Full name: " th:text="' ' + ${infoAboutPerson.getFullName()}"></p>
     <p data-label="Email: " th:text="' ' + ${infoAboutPerson.getEmail()}"></p>

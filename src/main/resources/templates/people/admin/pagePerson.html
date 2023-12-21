@@ -101,6 +101,13 @@
             font-size: 14px;
         }
 
+        .button-spacing {
+            margin-top: -1px;
+            margin-right: 510px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-start;
+        }
     </style>
     <script>
         $(document).ready(function() {
@@ -109,8 +116,11 @@
     </script>
 </head>
 <body>
-
 <main>
+    <form th:method="GET" class="button-spacing" th:action="@{/people}">
+        <input type="submit" value="back">
+    </form>
+    <br>
     <!-- Display information about the person -->
     <div>
         <p><b>User name:</b> <span th:text="${infoAboutPerson.getUserName()}"></span></p>

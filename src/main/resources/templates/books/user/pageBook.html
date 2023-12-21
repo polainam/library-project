@@ -45,10 +45,20 @@
         input[type="submit"]:hover {
             background-color: #9352ab;
         }
+
+        .back {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-start;
+        }
     </style>
 </head>
 <body>
 <main>
+    <form th:method="GET" class="back" th:action="@{/books}">
+        <input type="submit" value="back">
+    </form>
+    <br>
     <p th:text="${infoAboutBook.getTitle() + ', ' + infoAboutBook.getWriter() + ', ' + infoAboutBook.getYearOfPublishing()}"></p>
 
     <br>

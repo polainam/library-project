@@ -57,10 +57,20 @@
         p[style] {
             color: grey;
         }
+
+        .button-spacing {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-start;
+        }
     </style>
 </head>
 <body>
 <main>
+    <form th:method="GET" class="button-spacing" th:action="@{/books}">
+        <input type="submit" value="back">
+    </form>
+    <br>
     <p th:text="${infoAboutBook.getTitle() + ', ' + infoAboutBook.getWriter() + ', ' + infoAboutBook.getYearOfPublishing()}"></p>
 
     <br>

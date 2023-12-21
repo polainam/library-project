@@ -76,6 +76,10 @@
             margin-right: 30px;
         }
 
+        .button-spacing {
+            margin-right: 30px; /* Измените это значение на нужное вам расстояние */
+        }
+
         .book-link, .person-link {
             display: block;
             margin-bottom: 10px;
@@ -116,18 +120,29 @@
         .profile-form {
             margin-top: -1px;
             margin-right: 510px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-start;
         }
     </style>
 </head>
 <body>
 <main>
     <div sec:authorize="hasRole('USER')" class="profile-form">
+        <form th:method="GET" class="button-spacing" th:action="@{/books}">
+            <input type="submit" value="back">
+        </form>
+
         <form th:method="GET" th:action="@{/people/user/{id}(id=${personId})}">
             <input type="submit" value="View Profile">
         </form>
     </div>
 
     <div sec:authorize="hasRole('ADMIN')" class="admin-actions">
+        <form th:method="GET" class="button-spacing" th:action="@{/books}">
+            <input type="submit" value="back">
+        </form>
+
         <form th:method="GET" class="button-spacing" th:action="@{/people}">
             <input type="submit" value="People">
         </form>
