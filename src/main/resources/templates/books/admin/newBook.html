@@ -7,8 +7,6 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -25,7 +23,7 @@
         }
 
         form {
-            margin: 10px 0 -5px;
+            margin: 0; /* Убираем внешний отступ */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -64,29 +62,32 @@
 
         div[style] {
             color: grey;
-            margin-top: 10px;
+            margin-top: 5px; /* Меняем отступ сверху */
+            text-align: left;
+            width: 100%;
+            margin-left: 5px;
         }
     </style>
 </head>
 <body>
 <main>
     <form th:method="POST" th:action="@{/books}" th:object="${newBook}">
-        <label for="title">Book Title</label>
+        <label for="title">Book Title: </label>
         <input type="text" th:field="*{title}" id="title"/>
-        <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
-
-        <label for="writer">Writer</label>
+        <div style="color:gray" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+        <br/>
+        <label for="writer">Writer: </label>
         <input type="text" th:field="*{writer}" id="writer"/>
-        <div th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}"></div>
-
-        <label for="yearOfPublishing">Year of Publishing</label>
+        <div style="color:gray" th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}"></div>
+        <br/>
+        <label for="yearOfPublishing">Year of Publishing: </label>
         <input type="text" th:field="*{yearOfPublishing}" id="yearOfPublishing"/>
-        <div th:if="${#fields.hasErrors('yearOfPublishing')}" th:errors="*{yearOfPublishing}"></div>
-
-        <label for="numberOfCopies">Number of Copies</label>
+        <div style="color:gray" th:if="${#fields.hasErrors('yearOfPublishing')}" th:errors="*{yearOfPublishing}"></div>
+        <br/>
+        <label for="numberOfCopies">Number of Copies: </label>
         <input type="text" th:field="*{numberOfCopies}" id="numberOfCopies" />
-        <div th:if="${#fields.hasErrors('numberOfCopies')}" th:errors="*{numberOfCopies}"></div>
-
+        <div style="color:gray" th:if="${#fields.hasErrors('numberOfCopies')}" th:errors="*{numberOfCopies}"></div>
+        <br/>
         <input type="submit" value="Create"/>
     </form>
 </main>
