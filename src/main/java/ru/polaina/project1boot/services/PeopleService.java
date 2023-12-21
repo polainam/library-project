@@ -81,10 +81,6 @@ public class PeopleService implements UserDetailsService {
         return peopleRepository.findAllByRole(role);
     }
 
-/*    public List<Person> findAll(Integer page, Integer peoplePerPage) {
-        return peopleRepository.findAll(PageRequest.of(page, booksPerPage)).getContent();
-    }*/
-
     public Page<Person> findUsersWithRole(Integer page, Integer peoplePerPage) {
         String roleName = "ROLE_USER";
         Pageable pageable = PageRequest.of(page, peoplePerPage);
@@ -92,8 +88,8 @@ public class PeopleService implements UserDetailsService {
         return peopleRepository.findByRole(roleName, pageable);
     }
 
-    public List<Person> findByTitleIsStartingWith(String query) {
-        return peopleRepository.findByUserNameIsStartingWith(query);
+    public List<Person> findByTitleIsStartingWith(String query, String roleName) {
+        return peopleRepository.findByUserNameIsStartingWithAndRole(query, roleName);
     }
 
     public boolean isNewEmailTheSame(int id, Person editPerson) {

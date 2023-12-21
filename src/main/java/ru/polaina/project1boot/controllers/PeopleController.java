@@ -220,7 +220,7 @@ public class PeopleController {
 
     @GetMapping("/search")
     public String searchPeople(@RequestParam String query, Model model) {
-        List<Person> searchPeople = peopleService.findByTitleIsStartingWith(query);
+        List<Person> searchPeople = peopleService.findByTitleIsStartingWith(query, "ROLE_USER");
         model.addAttribute("people", searchPeople);
         return "people/listOfPeople";
     }

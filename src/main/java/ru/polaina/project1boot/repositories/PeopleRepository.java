@@ -16,7 +16,7 @@ public interface PeopleRepository extends JpaRepository<Person, Integer> {
     Optional<Person> findByUserName(String name);
     List<Person> findAllByRole(String role);
     Page<Person> findByRole(@Param("roleName") String roleName, Pageable pageable);
-    List<Person> findByUserNameIsStartingWith(String query);
+    List<Person> findByUserNameIsStartingWithAndRole(String query, String roleName);
     Optional<Person> findByEmail(String email);
     Optional<Person> findByPhoneNumber(String phoneNumber);
 }
