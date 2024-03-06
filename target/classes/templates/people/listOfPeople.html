@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Search</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 600px;
+        }
+
+        .search-form {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 8px;
+            margin-right: 10px;
+            width: 300px;
+        }
+
+        .search-button {
+            padding: 8px 12px;
+            background-color: #9a64c7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background-color: #9352ab;
+        }
+
+        .person-link {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .person-link:hover {
+            background-color: #eaeaea;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 0 5px;
+            text-decoration: none;
+            background-color: #9352ab;
+            color: #fff;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #9352ab;
+        }
+
+        .back {
+            padding: 8px 12px;
+            background-color: #9a64c7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+        }
+
+        .back:hover {
+            background-color: #9352ab;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <form th:method="GET" th:action="@{/books}">
+        <input type="submit" class="back" value="back">
+    </form>
+    <br>
+    <form th:method="GET" th:action="@{/people/search}" class="search-form" onsubmit="return validateSearch()">
+        <label>
+            <input type="text" name="query" class="search-input" placeholder="Enter text to search">
+        </label>
+        <button type="submit" class="search-button">Search</button>
+    </form>
+
+    <div th:each="person : ${people}">
+        <a class="person-link" th:href="@{/people/admin/{id}(id=${person.getPersonId()})}">
+            <span th:text="${person.getUserName()}"></span>
+        </a>
+    </div>
+
+    <div class="pagination" th:if="${totalPages > 0}">
+        <div th:if="${currentPage > 0}">
+            <a th:href="@{'/people?page=' + ${currentPage - 1} + '&peoplePerPage=' + ${peoplePerPage}}" class="pagination-link" th:text="${'Previous'}"></a>
+        </div>
+
+        <div th:if="${currentPage < totalPages}">
+            <a th:href="@{'/people?page=' + ${currentPage + 1} + '&peoplePerPage=' + ${peoplePerPage}}" class="pagination-link" th:text="${'Next'}"></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validateSearch() {
+        var query = document.querySelector('input[name="query"]').value.trim();
+        if (query === "") {
+            alert("Please enter text before searching");
+            return false;
+        }
+        return true;
+    }
+</script>
+
+</body>
+</html>

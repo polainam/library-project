@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        form {
+            text-align: left;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 20%; /* Ширина формы */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Центрирование по горизонтали */
+            margin: auto; /* Центрирование формы по горизонтали */
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            width: 100%; /* Убедимся, что текстовые метки занимают всю ширину */
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"] {
+            padding: 8px;
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #9a64c7;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 20%; /* Ширина кнопки */
+            transition: background-color 0.3s ease;
+            align-self: center; /* Центрирование кнопки по горизонтали */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #9352ab;
+        }
+
+        div {
+            color: gray;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<form th:method="POST" th:action="@{/auth/registration}" th:object="${newPerson}">
+    <label for="userName">Enter username: </label>
+    <input type="text" th:field="*{userName}" id="userName"/>
+    <div style="color:gray" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
+    <br/>
+    <label for="password">Enter password: </label>
+    <input type="password" th:field="*{password}" id="password"/>
+    <div style="color:gray" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+    <br/>
+    <label for="fullName">Enter full name: </label>
+    <input type="text" th:field="*{fullName}" id="fullName"/>
+    <div style="color:gray" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+    <br/>
+    <label for="email">Enter email: </label>
+    <input type="email" th:field="*{email}" id="email"/>
+    <div style="color:gray" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+    <br/>
+    <label for="phoneNumber">Enter phone number: </label>
+    <input type="tel" th:field="*{phoneNumber}" id="phoneNumber"/>
+    <div style="color:gray" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+    <br/>
+    <input type="submit" value="Sign up"/>
+</form>
+</body>
+</html>
